@@ -8,31 +8,6 @@
 class Zest_File_Helper_Image extends Zest_File_Helper_Abstract_Convertable{
 	
 	/**
-	 * @param string $url
-	 * @return Zest_File_Helper_Image
-	 */
-	public function capture($url){
-		$array = array(
-			'url' => $url,
-			'out' => $this->_file->getPathname()
-		);
-		
-		if(strtolower(substr(PHP_OS, 0, 3)) == 'win'){
-			$command = dirname(__FILE__).'/Image/CutyCapt.exe';
-		}
-		else{
-			throw new Zest_File_Exception(sprintf('L\'OS "%s" n\'est pas implémenté.', PHP_OS));
-		}
-		foreach($array as $argName => $argValue){
-			$command .= ' --'.$argName.'='.escapeshellarg($argValue);
-		}
-		
-		exec($command);
-		
-		return $this;
-	}
-	
-	/**
 	 * @param array $options
 	 * @return Zest_File_Helper_Image
 	 */
