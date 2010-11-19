@@ -392,7 +392,9 @@ class Zest_File extends Zest_File_Abstract{
 		}
 		if($helper instanceof Zest_File_Helper_Abstract){
 			$suffix = strtolower(substr(strrchr(get_class($helper), '_'), 1));
-			$this->_helpers[$suffix] = $helper;
+			if(!isset($this->_helpers[$suffix])){
+				$this->_helpers[$suffix] = $helper;
+			}
 		}
 		else if($throwExceptions){
 			throw new Zest_File_Exception('Le helper doit hériter de Zest_File_Helper_Abstract.');
