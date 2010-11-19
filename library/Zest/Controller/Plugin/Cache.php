@@ -23,19 +23,35 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 	protected $_now = 0;
 	
 	/**
-	 * @var array
+	 * @var string
 	 */
-	protected $_options = array();
+	protected $_cacheDir = null;
+	
+	/**
+	 * @var string
+	 */
+	protected $_defaultLifetime = null;
+	
+	/**
+	 * @var string
+	 */
+	protected $_cacheIdPrefix = null;
 	
 	/**
 	 * @return void
 	 */
 	public function __construct(){
 		$this->_now = time();
-		$this->_options = array(
-			'cache_dir' => sys_get_temp_dir().'cache/',
-			'lifetime' => null
-		);
+		$this->_cacheDir = sys_get_temp_dir().'cache/';
+	}
+	
+	/**
+	 * @param string $cacheDir
+	 * @return Zest_Controller_Plugin_Cache
+	 */
+	public function setCacheIdPrefix($prefix){
+		$this->_cacheIdPrefix = $prefix;
+		return $this;
 	}
 	
 	/**
@@ -43,7 +59,7 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 	 * @return Zest_Controller_Plugin_Cache
 	 */
 	public function setCacheDir($cacheDir){
-		$this->_options['cache_dir'] = $cacheDir;
+		$this->_cacheDir = $cacheDir;
 		return $this;
 	}
 	
@@ -51,8 +67,8 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 	 * @param integer $lifetime
 	 * @return Zest_Controller_Plugin_Cache
 	 */
-	public function setLifetime($lifetime){
-		$this->_options['lifetime'] = $lifetime;
+	public function setDefaultLifetime($lifetime){
+		$this->_defaultLifetime = $lifetime;
 		return $this;
 	}
 	
@@ -107,18 +123,18 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 	 */
 	protected function _getCache(){
 		if(!$this->_cache){
-			if(!file_exists($this->_options['cache_dir'])){
-				Zest_Dir::factory($this->_options['cache_dir'])->recursiveMkdir();
+			if(!file_exists($this->_cacheDir)){
+				Zest_Dir::factory($this->_cacheDir)->recursiveMkdir();
 			}
 			$frontend = array(
 				'automatic_serialization' => true
 			);
 			$backend = array(
-				'cache_dir' => $this->_options['cache_dir']
+				'cache_dir' => $this->_cacheDir
 			);
 			$this->_cache = Zend_Cache::factory('Core', 'File', $frontend, $backend);
 		}
-		$this->_cache->setLifetime($this->_options['lifetime']);
+		$this->_cache->setLifetime($this->_defaultLifetime);
 		return $this->_cache;
 	}
 	
@@ -126,16 +142,18 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 	 * @return string
 	 */
 	protected function _getCacheId($module, $controller, $action){
-		$module = $module ? $module : Zest_Controller_Front::getInstance()->getDefaultModule();
-		$controller = $controller ? $controller : Zest_Controller_Front::getInstance()->getDefaultControllerName();
-		$action = $action ? $action : Zest_Controller_Front::getInstance()->getDefaultAction();
+		$front = Zest_Controller_Front::getInstance();
 		
-		$dispatcher = Zest_Controller_Front::getInstance()->getDispatcher();
+		$module = $module ? $module : $front->getDefaultModule();
+		$controller = $controller ? $controller : $front->getDefaultControllerName();
+		$action = $action ? $action : $front->getDefaultAction();
+		
+		$dispatcher = $front->getDispatcher();
 		$module = $dispatcher->formatModuleName($module);
 		$controller = $dispatcher->formatControllerName($controller);
 		$action = $dispatcher->formatActionName($action);
 		
-		return $module.'_'.$controller.'_'.$action;
+		return ($this->_cacheIdPrefix ? $this->_cacheIdPrefix.'_' : '').$module.'_'.$controller.'_'.$action;
 	}
 	
 	/**
@@ -172,7 +190,7 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 		if(!$this->_isCacheable($request)) return;
 		
 		if($this->_lifetimes){
-			$this->_options['lifetime'] = min($this->_lifetimes);
+			$this->_defaultLifetime = min($this->_lifetimes);
 		}
 		
 		$cacheId = $this->_getCacheId($request->getModuleName(), $request->getControllerName(), $request->getActionName());
