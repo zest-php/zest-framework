@@ -130,6 +130,11 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 		$controller = $controller ? $controller : Zest_Controller_Front::getInstance()->getDefaultControllerName();
 		$action = $action ? $action : Zest_Controller_Front::getInstance()->getDefaultAction();
 		
+		$dispatcher = Zest_Controller_Front::getInstance()->getDispatcher();
+		$module = $dispatcher->formatModuleName($module);
+		$controller = $dispatcher->formatControllerName($controller);
+		$action = $dispatcher->formatActionName($action);
+		
 		return $module.'_'.$controller.'_'.$action;
 	}
 	
