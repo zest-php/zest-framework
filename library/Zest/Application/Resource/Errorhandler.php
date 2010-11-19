@@ -5,7 +5,7 @@
  * @package Zest_Application
  * @subpackage Resource
  */
-class Zest_Application_Resource_ErrorHandler extends Zend_Application_Resource_ResourceAbstract{
+class Zest_Application_Resource_Errorhandler extends Zend_Application_Resource_ResourceAbstract{
 	
 	/**
 	 * @return void
