@@ -69,7 +69,10 @@ abstract class Zest_Controller_Plugin_HttpRequest_Abstract{
 		if(substr($url, -1) != '/'){
 			$url .= '/';
 		}
-		$path = rtrim($path, '/\\');
+		
+		$path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
+		$path = rtrim($path, '/');
+		
 		$this->_source[] = array($url, $path);
 		return $this;
 	}
@@ -80,6 +83,9 @@ abstract class Zest_Controller_Plugin_HttpRequest_Abstract{
 	 * @return Zest_Controller_Plugin_HttpRequest_Abstract
 	 */
 	public function setCache($url, $path){
+		$path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
+		$path = rtrim($path, '/');
+		
 		$this->_cache = array($url, $path);
 		return $this;
 	}
@@ -183,7 +189,7 @@ abstract class Zest_Controller_Plugin_HttpRequest_Abstract{
 	 * @param string $destinationDir
 	 * @return string
 	 */
-	private function _getRelativeDir($sourceDir, $destinationDir){
+	private function _getRelativeDir($sourceDir, $destinationDir){		
 		$source = explode('/', trim($sourceDir, '/'));
 		$destination = explode('/', trim($destinationDir, '/'));
 		foreach($source as $key => $part){

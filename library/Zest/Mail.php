@@ -12,6 +12,11 @@ class Zest_Mail extends Zend_Mail{
 	protected $_layout = null;
 	
 	/**
+	 * @var string
+	 */
+	protected $_charset = 'utf-8';
+	
+	/**
 	 * @param string|array $charset
 	 */
 	public function __construct($options = array()){
