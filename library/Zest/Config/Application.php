@@ -22,10 +22,14 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 	protected $_modulesConfigFormat = null;
 	
 	/**
-	 * @param array $options
+	 * @param Zend_Application $application
+	 * @param string|array $options
 	 * @return void
 	 */
-	public function __construct(Zend_Application $application, array $options){
+	public function __construct(Zend_Application $application, $options){
+		if(is_string($options)){
+			$options = array('pathname' => $options);
+		}
 		$options = array_change_key_case($options, CASE_LOWER);
 		
 		$this->_application = $application;
@@ -49,10 +53,11 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 	}
 	
 	/**
-	 * @param string $options
+	 * @param Zend_Application $application
+	 * @param string|array $options
 	 * @return void
 	 */
-	public static function init(Zend_Application $application, array $options){
+	public static function init(Zend_Application $application, $options){
 		new self($application, $options);
 	}
 	
@@ -103,14 +108,10 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 			'scheme' => $request->getScheme()
 		)));
 		
-		if($this->_application){
+		if($this->_application && $this->_modulesConfigFormat){
 			$modulesDirectories = $this->_application->getModulesDirectories();
 			
-			if($modulesDirectories){
-				if(!$this->_modulesConfigFormat){
-					throw new Zest_Config_Exception('Le format des fichiers de configuration des modules n\'est pas défini.');
-				}
-			
+			if($modulesDirectories){			
 				// modules
 				foreach($modulesDirectories as $module => $modulesDirectory){
 					$this->_set('module.'.$module, array());
