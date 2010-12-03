@@ -44,8 +44,6 @@ class Zest_Db_Model_NestedSet{
 	 * @return Zest_Db_Model_NestedSet
 	 */
 	public function alterDbSelect(Zest_Db_Model $localModel, Zend_Db_Table_Select $select){
-//		$localTableName = $localModel->getDbTable()->info(Zest_Db_Table::NAME);
-//		$dbAdapter = $localModel->getDbAdapter();
 		$select->setIntegrityCheck(false);
 		
 		foreach($this->_nested as $nested){
@@ -53,20 +51,13 @@ class Zest_Db_Model_NestedSet{
 			$foreignTableName = $foreignTable->info(Zest_Db_Table::NAME);
 			$foreignTableCols = $foreignTable->info(Zest_Db_Table::COLS);
 			
-//			$cond1 = $dbAdapter->quoteIdentifier($foreignTableName).'.'.$dbAdapter->quoteIdentifier($nested->getForeignCol());
-//			$cond2 = $dbAdapter->quoteIdentifier($localTableName).'.'.$dbAdapter->quoteIdentifier($nested->getLocalCol());
-			
 			foreach($foreignTableCols as $key => $col){
 				unset($foreignTableCols[$key]);
 				$foreignTableCols[$foreignTableName.self::COL_SEPARATOR.$col] = $col;
 			}
 			
 			$select->joinUsing(Zest_Db_Table_Select::LEFT_JOIN, $foreignTableName, array($nested->getForeignCol(), $nested->getLocalCol()), $foreignTableCols);
-//			$select->joinLeft($foreignTableName, $cond1.' = '.$cond2, $foreignTableCols);
 		}
-				
-//		echo $select->assemble();
-//		exit;
 	}
 	
 	/**
@@ -88,12 +79,6 @@ class Zest_Db_Model_NestedSet{
 			
 			// clef servant aux références objet dans le tableau $registry
 			$registryKey = null;
-			
-			/**
-			 * @todo
-			 * 		1 : gérer les références de $child
-			 * 		2 : gérer les références de $arrayObjects (ex : mes vidéos)
-			 */
 			
 			foreach($objects as $object){
 				
