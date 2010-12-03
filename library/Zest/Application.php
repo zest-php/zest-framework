@@ -15,51 +15,56 @@ class Zest_Application extends Zend_Application{
 	 * @param array $options
 	 * @return void
 	 */
-	public function __construct($environment, $options = null){
-		parent::__construct($environment, $options);
+	public function __construct($environment, $options = null){	
+		parent::__construct($environment);
+		
+		// options
+		if(is_string($options)){
+			$options = array('config' => $options);
+		}
+		else if($options instanceof Zend_Config){
+			$options = $options->toArray();
+		}
+		else if(!is_array($options)){
+			throw new Zest_Application_Exception('Le paramètre "options" doit être une chaîne de caractères, un objet de configuration ou un tableau.');
+		}
+		$this->setOptions(array_diff_key($options, array_flip(array('config'))));
 		
 		// initialisations propres au framework Zest
-		$this->setAutoloaderNamespaces(array('Zest'));
 		
-		// frontcontroller.actionhelperpaths
-		Zend_Controller_Action_HelperBroker::addPrefix('Zest_Controller_Action_Helper');
-		
-		// pluginpaths
-		$this->getBootstrap()->getPluginLoader()->addPrefixPath('Zest_Application_Resource', 'Zest/Application/Resource');
-		
-		if(!is_null($options)){
-			// même container pour tous les boostraps (!= new Zend_Registry)
-			$container = Zend_Registry::getInstance();
-			$this->getBootstrap()->setContainer($container);
+			// autoloader namespace
+			$this->setAutoloaderNamespaces(array('Zest'));
 			
+			// frontcontroller.actionhelperpaths
+			Zend_Controller_Action_HelperBroker::addPrefix('Zest_Controller_Action_Helper');
+			
+			// pluginpaths
+			$this->getBootstrap()->getPluginLoader()->addPrefixPath('Zest_Application_Resource', 'Zest/Application/Resource');
+		
+		// même container pour tous les boostraps (!= new Zend_Registry)
+		$container = Zend_Registry::getInstance();
+		$this->getBootstrap()->setContainer($container);
+			
+		if(!is_null($options)){
 			$methods = array('config', 'frontcontroller', 'bootstraps');
 			foreach($methods as $method){
-				if(!isset($this->_options[$method])){
-					$this->_options[$method] = array();
-				}
-				if(!is_array($this->_options[$method])){
-					continue;
-				}
-				$container->$method = $this->{'_init'.ucfirst($method)}($this->_options[$method]);
+				$option = isset($options[$method]) ? $options[$method] : null;
+				$container->$method = $this->{'_init'.ucfirst($method)}($option);
 			}
 		}
 	}
 	
 	/**
-	 * @param array $options
+	 * @param mixed $options
 	 * @return Zest_Config
 	 */
-	protected function _initConfig(array $options){
+	protected function _initConfig($options){
 		if($options){
 			Zest_Config::init($this, $options);
 			
 			// récupération de la configuration
 			$options = Zest_Config::get();
-			$options = array_change_key_case($options, CASE_LOWER);			
-			
-			// filtrage des clefs
-			$keys = array('phpsettings', 'includepaths', 'autoloadernamespaces', 'bootstrap', 'pluginpaths', 'resources');
-			$options = array_intersect_key($options, array_flip($keys));
+			$options = array_change_key_case($options, CASE_LOWER);
 			
 			// attributions des options à l'application et au bootstrap
 			$options = $this->mergeOptions($this->getOptions(), $options);
@@ -70,10 +75,10 @@ class Zest_Application extends Zend_Application{
 	}
 	
 	/**
-	 * @param array $options
+	 * @param mixed $options
 	 * @return Zest_Application
 	 */
-	protected function _initFrontcontroller(array $options){
+	protected function _initFrontcontroller($options){
 		$modulesDirectories = $this->getModulesDirectories();
 		$frontController = Zest_Controller_Front::getInstance();
 		
@@ -92,10 +97,10 @@ class Zest_Application extends Zend_Application{
 	}
 	
 	/**
-	 * @param array $options
+	 * @param mixed $options
 	 * @return Zend_Application_Resource_Modules
 	 */
-	protected function _initBootstraps(array $options){
+	protected function _initBootstraps($options){
 		// (bootstrap + autoloader) pour chaque module
 		$resourceModules = new Zend_Application_Resource_Modules(array('bootstrap' => $this->getBootstrap()));
 		return $resourceModules;
@@ -105,20 +110,33 @@ class Zest_Application extends Zend_Application{
 	 * @param null|string|array $resource
 	 * @return Zest_Application
 	 */
-	public function bootstrap($resource = null){		
+	public function bootstrap($resource = null){
+		// initialisation des modules dans le "Zend_Application_Resource_Modules" issu de la méthode "_initBootstraps"
 		if($this->getBootstrap()->hasResource('bootstraps')){
 			$this->getBootstrap()->getResource('bootstraps')->init();
 		}
+		
+		// bootstrap de l'application
 		parent::bootstrap($resource);
 		
 		return $this;
 	}
 	
 	/**
+	 * @return Zest_Application_Bootstrap_Bootstrap
+	 */
+	public function getBootstrap(){
+		if(is_null($this->_bootstrap)){
+			$this->_bootstrap = new Zest_Application_Bootstrap_Bootstrap($this);
+		}
+		return $this->_bootstrap;
+	}
+	
+	/**
 	 * @return array
 	 */
 	public function getModulesDirectories(){
-		if($this->hasOption('modules_directories_loaded')){
+		if($this->hasOption('_modulesdirectoriesloaded')){
 			return $this->getOption('modules_directories');
 		}
 		
@@ -183,7 +201,7 @@ class Zest_Application extends Zend_Application{
 		}
 		
 		$this->setOptions(array(
-			'modules_directories_loaded' => true,
+			'_modulesdirectoriesloaded' => true,
 			'modules_directories' => $directories,
 			'modules_versions' => $versions
 		));
@@ -195,7 +213,7 @@ class Zest_Application extends Zend_Application{
 	 * @return array
 	 */
 	public function getModulesVersions(){
-		if(!$this->hasOption('modules_directories_loaded')){
+		if(!$this->hasOption('_modulesdirectoriesloaded')){
 			$this->getModulesDirectories();
 		}
 		return $this->getOption('modules_versions');
@@ -214,14 +232,6 @@ class Zest_Application extends Zend_Application{
 			return $value;
 		}
 		return null;
-	}
-	
-	/**
-	 * @param string $file
-	 * @return array
-	 */
-	protected function _loadConfig($file){
-		return array();
 	}
 	
 }
