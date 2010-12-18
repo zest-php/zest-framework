@@ -25,7 +25,7 @@ class Zest_Crypt{
 	/**
 	 * @return Zest_Crypt
 	 */
-	protected static function _getInstance(){
+	public static function getInstance(){
 		if(!self::$_instance){
 			self::$_instance = new self();
 		}
@@ -35,7 +35,7 @@ class Zest_Crypt{
 	/**
 	 * @return Zest_Crypt_Abstract
 	 */
-	protected function _getAdapter(){
+	public function getAdapter(){
 		if(!$this->_adapter){
 			$this->_adapter = new Zest_Crypt_Mcrypt();
 		}
@@ -48,7 +48,7 @@ class Zest_Crypt{
 	 * @return string
 	 */
 	public static function encrypt($data, $key = null){
-		return self::_getInstance()->_getAdapter()->encrypt($data, $key);
+		return self::getInstance()->getAdapter()->encrypt($data, $key);
 	}
 	
 	/**
@@ -57,7 +57,7 @@ class Zest_Crypt{
 	 * @return mixed
 	 */
 	public static function decrypt($encrypted, $key = null){
-		return self::_getInstance()->_getAdapter()->decrypt($encrypted, $key);
+		return self::getInstance()->getAdapter()->decrypt($encrypted, $key);
 	}
 	
 	/**
@@ -69,7 +69,7 @@ class Zest_Crypt{
 	 * @return string
 	 */
 	public static function getRandomPassword($longueur = 8, $nombres = true, $minuscules = true, $majuscules = false, $autres = false){
-		return self::_getInstance()->_getRandomPassword($longueur, $nombres, $minuscules, $majuscules, $autres);
+		return self::getInstance()->_getRandomPassword($longueur, $nombres, $minuscules, $majuscules, $autres);
 	}
 	
 	/**
