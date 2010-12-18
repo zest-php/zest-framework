@@ -225,4 +225,12 @@ abstract class Zest_File_Abstract{
 		return chmod($this->getPathname(), intval($mode, 8));
 	}
 	
+	/**
+	 * @return void
+	 */
+	public static function join(){
+		$args = func_get_args();
+		return implode(DIRECTORY_SEPARATOR, $args);
+	}
+	
 }
