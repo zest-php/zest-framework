@@ -9,6 +9,30 @@
 class Zest_Form_Decorator_TrLabelElement extends Zest_Form_Decorator_Abstract{
 	
 	/**
+	 * @var array
+	 */
+	protected $_elementRenderDecorator = null;
+	
+	/**
+	 * @param Zend_Form_Decorator_Abstract $decorator
+	 * @return Zest_Form_Decorator_TrLabelElement
+	 */
+	public function setElementRenderDecorator(Zend_Form_Decorator_Abstract $decorator){
+		$this->_elementRenderDecorator = $decorator;
+		return $this;
+	}
+	
+	/**
+	 * @return Zend_Form_Decorator_Abstract
+	 */
+	public function getElementRenderDecorator(){
+		if(is_null($this->_elementRenderDecorator)){
+			$this->_elementRenderDecorator = new Zend_Form_Decorator_ViewHelper();
+		}
+		return $this->_elementRenderDecorator;
+	}
+	
+	/**
 	 * @param string $content
 	 * @return string
 	 */
@@ -19,7 +43,7 @@ class Zest_Form_Decorator_TrLabelElement extends Zest_Form_Decorator_Abstract{
 		}
 		
 		if(!$element instanceof Zend_Form_Element_Captcha && !$element instanceof Zend_Form_Element_File){
-			$viewHelper = new Zend_Form_Decorator_ViewHelper();
+			$viewHelper = $this->getElementRenderDecorator();
 			$viewHelper->setElement($element);
 			$content = $viewHelper->render($content);
 		}
