@@ -175,6 +175,7 @@ class Zest_Db_Object extends Zest_Data{
 	
 	/**
 	 * @param array $data
+	 * @param array $options
 	 * @return Zest_Db_Object
 	 */
 	public function create(array $data = array(), array $options = array()){
@@ -185,6 +186,7 @@ class Zest_Db_Object extends Zest_Data{
 	
 	/**
 	 * @param mixed|array $primary
+	 * @param array $options
 	 * @return Zest_Db_Object
 	 */
 	public function find($primary, array $options = array()){
@@ -194,6 +196,20 @@ class Zest_Db_Object extends Zest_Data{
 	}
 	
 	/**
+	 * @param string $method
+	 * @param array $args
+	 * @return mixed
+	 */
+	public function __call($method, $args){
+		if(substr(strtolower($method), 0, 6) == 'findby'){
+			$property = strtolower(substr($method, 6, 1)).substr($method, 7);
+			return $this->find(Zest_Db_Model_Request::factory(array($property => $args)));
+		}
+		throw new Zest_Db_Exception(sprintf('La méthode "%s" n\'existe pas.', $method));
+	}
+	
+	/**
+	 * @param array $options
 	 * @return Zest_Db_Object
 	 */
 	public function save(array $options = array()){
@@ -202,6 +218,7 @@ class Zest_Db_Object extends Zest_Data{
 	}
 	
 	/**
+	 * @param array $options
 	 * @return Zest_Db_Object
 	 */
 	public function delete(array $options = array()){
