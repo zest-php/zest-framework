@@ -202,8 +202,10 @@ class Zest_Db_Object extends Zest_Data{
 	 */
 	public function __call($method, $args){
 		if(substr(strtolower($method), 0, 6) == 'findby'){
-			$property = strtolower(substr($method, 6, 1)).substr($method, 7);
-			return $this->find(Zest_Db_Model_Request::factory(array($property => $args)));
+			$this->_data = array();
+			$args = array_pad($args, 1, null);
+			array_splice($args, 1, 0, array($this));
+			return call_user_func_array(array($this->getMapper(), $method), $args);
 		}
 		throw new Zest_Db_Exception(sprintf('La méthode "%s" n\'existe pas.', $method));
 	}
