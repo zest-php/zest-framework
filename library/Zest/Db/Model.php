@@ -366,7 +366,11 @@ class Zest_Db_Model{
 	 * @param Zest_Db_Model_Request $request
 	 * @return array
 	 */
-	public function getArray(Zest_Db_Model_Request $request){
+	public function getArray(Zest_Db_Model_Request $request = null){
+		if(is_null($request)){
+			$request = Zest_Db_Model_Request::factory();
+		}
+		
 		if(method_exists($this->_getAdapter(), 'getArray')){
 			return $this->_getAdapter()->getArray($request);
 		}
