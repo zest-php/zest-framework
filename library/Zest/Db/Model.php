@@ -224,7 +224,14 @@ class Zest_Db_Model{
 	 * @return Zend_Db_Table_Select
 	 */
 	public function getDbSelect(Zest_Db_Model_Request $request){
-		$select = $this->_getAdapter()->getDbSelect($request);
+		$table = $this->getDbTable();
+		$select = $table->select();
+		
+		// création de la condition
+		$select->where($this->_getAdapter()->getWhereQuery($table, $request->toArray(), '='));
+		
+		// remplacement du SELECT * par chaque nom de colonne
+		$select->from($table->info(Zest_Db_Table::NAME), $table->info(Zest_Db_Table::COLS));
 		
 		// nested set
 		$this->_nestedSet->alterDbSelect($this, $select);

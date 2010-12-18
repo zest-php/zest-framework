@@ -33,9 +33,11 @@ abstract class Zest_Db_Model_Adapter_Abstract{
 	abstract public function delete(Zest_Db_Model_Request $request);
 	
 	/**
-	 * @param Zest_Db_Model_Request $request
-	 * @return Zend_Db_Table_Select
+	 * @param Zest_Db_Table $table
+	 * @param array $arrayValues
+	 * @param string $operator
+	 * @return string
 	 */
-	abstract public function getDbSelect(Zest_Db_Model_Request $request);
+	abstract public function getWhereQuery(Zest_Db_Table $table, array $arrayValues, $operator);
 	
 }
