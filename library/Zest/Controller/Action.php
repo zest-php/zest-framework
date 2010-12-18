@@ -64,26 +64,6 @@ abstract class Zest_Controller_Action extends Zend_Controller_Action{
 	}
 	
 	/**
-	 * le helper de vue "action" ne permet pas d'utiliser les méthodes "_forward" et "_redirect"
-	 * 
-	 * @param string $action
-	 * @return Zest_Controller_Action
-	 */
-	protected function _execute($action, $useScript = true){
-		$method = $this->_formatActionName($action);
-		if(method_exists($this, $method)){
-			if($useScript){
-				$this->_setScriptAction($action);
-			}
-			$this->$method();
-		}
-		else{
-			throw new Zest_Controller_Exception(sprintf('La méthode "%s" n\'existe pas.', $method));
-		}
-		return $this;
-	}
-	
-	/**
 	 * @param string $name
 	 * @return Zest_Controller_Action
 	 */
