@@ -46,7 +46,7 @@ class Zest_Crypt_Mcrypt extends Zest_Crypt_Abstract{
 	public function decrypt($encrypted, $key = null){
 		$cipher = $this->_initCipher($key);
 			
-		$encrypted = urldecode($encrypted);
+//		$encrypted = urldecode($encrypted);
 		$encrypted = mdecrypt_generic($cipher, base64_decode($encrypted));
 		if(substr($encrypted, 0, 1) != '!'){
 			return false;
