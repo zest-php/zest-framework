@@ -91,18 +91,6 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	}
 	
 	/**
-	 * @param string $method
-	 * @param array $args
-	 * @return mixed
-	 */
-	public function __call($method, $args){
-		if(substr(strtolower($method), 0, 6) == 'findby'){
-			$property = strtolower(substr($method, 6, 1)).substr($method, 7);
-			return $this->getArray(Zest_Db_Model_Request::factory(array($property => $args)));
-		}
-	}
-	
-	/**
 	 * @param Zest_Db_Object $object
 	 * @return boolean
 	 */
