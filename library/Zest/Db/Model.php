@@ -414,4 +414,21 @@ class Zest_Db_Model{
 		return $this->_getAdapter()->delete($request);
 	}
 	
+	/**
+	 * @param string $method
+	 * @param array $args
+	 * @return mixed
+	 */
+	public function __call($method, $args){
+		switch(true){
+			case substr(strtolower($method), 0, 5) == 'getby':
+				$property = strtolower(substr($method, 5, 1)).substr($method, 6);
+				return $this->get(Zest_Db_Model_Request::factory(array($property => $args)));
+			case substr(strtolower($method), 0, 10) == 'getarrayby':
+				$property = strtolower(substr($method, 10, 1)).substr($method, 11);
+				return $this->getArray(Zest_Db_Model_Request::factory(array($property => $args)));
+		}
+		throw new Zest_Db_Exception(sprintf('La méthode "%s" n\'existe pas.', $method));
+	}
+	
 }
