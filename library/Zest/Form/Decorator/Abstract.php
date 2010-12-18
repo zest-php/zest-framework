@@ -16,6 +16,7 @@ abstract class Zest_Form_Decorator_Abstract extends Zend_Form_Decorator_Abstract
 		$id = $this->getElement()->getFullyQualifiedName();
 		$id = str_replace(array('[', ']'), '-', $id);
 		$id = trim($id, '-');
+		$id = preg_replace('/-+/', '-', $id);
 		return $id;
 	}
 	
