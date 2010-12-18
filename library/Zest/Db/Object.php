@@ -31,7 +31,7 @@ class Zest_Db_Object extends Zest_Data{
 	/**
 	 * @return Zest_Db_Object
 	 */
-	public function refreshClean(){
+	public function pushData(){
 		$this->_cleanData = $this->_data;
 		return $this;
 	}
@@ -39,14 +39,21 @@ class Zest_Db_Object extends Zest_Data{
 	/**
 	 * @return Zest_Db_Object
 	 */
-	public function restoreClean(){
+	public function pullCleanData(){
 		$this->_data = $this->_cleanData;
 		return $this;
 	}
 	
 	/**
-	 * @param unknown_type $data
-	 * @param unknown_type $cleanData
+	 * @return Zest_Db_Object
+	 */
+	public function hasCleanData(){
+		return !empty($this->_cleanData);
+	}
+	
+	/**
+	 * @param mixed $data
+	 * @param mixed $cleanData
 	 * @return boolean
 	 */
 	protected function _isClean($data, $cleanData){
@@ -125,7 +132,7 @@ class Zest_Db_Object extends Zest_Data{
 	 */
 	public function getCleanObject(){
 		$object = new $this();
-		$object->setData($this->_cleanData)->refreshClean();
+		$object->setData($this->_cleanData)->pushData();
 		return $object;
 	}
 
