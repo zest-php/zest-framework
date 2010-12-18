@@ -18,18 +18,6 @@ class Zest_Application extends Zend_Application{
 	public function __construct($environment, $options = null){	
 		parent::__construct($environment);
 		
-		// options
-		if(is_string($options)){
-			$options = array('config' => $options);
-		}
-		else if($options instanceof Zend_Config){
-			$options = $options->toArray();
-		}
-		else if(!is_array($options)){
-			throw new Zest_Application_Exception('Le paramètre "options" doit être une chaîne de caractères, un objet de configuration ou un tableau.');
-		}
-		$this->setOptions(array_diff_key($options, array_flip(array('config'))));
-		
 		// initialisations propres au framework Zest
 		
 			// autoloader namespace
@@ -46,11 +34,44 @@ class Zest_Application extends Zend_Application{
 		$this->getBootstrap()->setContainer($container);
 			
 		if(!is_null($options)){
+			// options
+			if(is_string($options)){
+				$options = array('config' => $options);
+			}
+			else if($options instanceof Zend_Config){
+				$options = $options->toArray();
+			}
+			else if(!is_array($options)){
+				throw new Zest_Application_Exception('Le paramètre "options" doit être une chaîne de caractères, un objet de configuration ou un tableau.');
+			}
+			$this->setOptions(array_diff_key($options, array_flip(array('config'))));
+		
 			$methods = array('config', 'frontcontroller', 'bootstraps');
 			foreach($methods as $method){
 				$option = isset($options[$method]) ? $options[$method] : null;
 				$container->$method = $this->{'_init'.ucfirst($method)}($option);
 			}
+		}
+	}
+	
+	/**
+	 * @return void
+	 */
+	public function __wakeup(){
+		$this->_autoloader = Zend_Loader_Autoloader::getInstance();
+		
+		$registry = $this->getBootstrap()->getContainer();
+		Zend_Registry::setInstance($registry);
+		
+		// les clefs du ArrayObject ne sont pas correctement restaurées, donc on les réaffecte
+		foreach($registry as $key => $value){
+			$registry->$key = $value;
+		}
+		
+		// recherche du front controller et de la configuration
+		if($registry->frontcontroller && $registry->config){
+			Zest_Controller_Front::setInstance($registry->frontcontroller);
+			Zest_Config::setInstance($registry->config);
 		}
 	}
 	
