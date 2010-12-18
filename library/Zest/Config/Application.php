@@ -84,13 +84,6 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 	}
 	
 	/**
-	 * @return Zest_Config_Application
-	 */
-	public static function hasInstance(){
-		return !is_null(self::$_instance);
-	}
-	
-	/**
 	 * @param Zest_Config_Application $instance
 	 * @return void
 	 */
