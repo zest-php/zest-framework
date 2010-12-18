@@ -25,8 +25,8 @@ class Zest_Db_Model_Request extends Zest_Data{
 	 * @param array $data
 	 * @return Zest_Db_Model_Request
 	 */
-	public static function factory(array $data = array()){
-		return new self($data);
+	public static function factory(array $data = array(), array $options = array()){
+		return new self($data, $options);
 	}
 	
 	/**
