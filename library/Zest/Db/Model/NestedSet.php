@@ -29,6 +29,7 @@ class Zest_Db_Model_NestedSet{
 	 */
 	public function addNested($nested){
 		$this->_nested[] = $nested;
+		return $this;
 	}
 	
 	/**
@@ -36,6 +37,14 @@ class Zest_Db_Model_NestedSet{
 	 */
 	public function hasNested(){
 		return count($this->_nested) != 0;
+	}
+	
+	/**
+	 * @return Zest_Db_Model_NestedSet
+	 */
+	public function resetNested(){
+		$this->_nested = array();
+		return $this;
 	}
 	
 	/**
