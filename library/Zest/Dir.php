@@ -234,4 +234,20 @@ class Zest_Dir extends Zest_File_Abstract implements IteratorAggregate{
 		return $this;
 	}
 	
+	/**
+	 * @return integer
+	 */
+	public function getSize(){
+		$children = $this->recursiveGetChildren();
+		
+		$size = 0;
+		foreach($children as $child){
+			if($child instanceof Zest_File){
+				$size += $child->getSize();
+			}
+		}
+		
+		return $size;
+	}
+	
 }
