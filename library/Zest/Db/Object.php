@@ -20,10 +20,10 @@ class Zest_Db_Object extends Zest_Data{
 	 * @param array $data
 	 * @return void
 	 */
-	public function __construct(array $data = array()){
+	public function __construct(array $data = null){
 		parent::__construct();
 		
-		if($data){
+		if(!is_null($data)){
 			$this->create($data);
 		}
 	}
