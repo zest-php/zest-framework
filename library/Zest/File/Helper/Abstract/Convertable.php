@@ -129,31 +129,31 @@ abstract class Zest_File_Helper_Abstract_Convertable extends Zest_File_Helper_Ab
 	protected function _getSize($width, $height, array $options){
 		$options = array_change_key_case($options, CASE_LOWER);
 		
-		if( (isset($options['inside']) || isset($options['outside'])) && isset($options['fit'])){
-			throw new Zest_File_Exception('Si les options "outside" ou "inside" sont renseignées, l\'option "fit" est inutile.');
+		if( (isset($options['max']) || isset($options['min'])) && isset($options['mode'])){
+			throw new Zest_File_Exception('Si les options "min" ou "max" sont renseignées, l\'option "mode" est inutile.');
 		}
 	
-		if(isset($options['outside'])){
-			$options['fit'] = 'outside';
+		if(isset($options['min'])){
+			$options['mode'] = 'min';
 			if(!isset($options['width'])){
-				$options['width'] = $options['outside'];
+				$options['width'] = $options['min'];
 			}
 			if(!isset($options['height'])){
-				$options['height'] = $options['outside'];
+				$options['height'] = $options['min'];
 			}
 		}
-		if(isset($options['inside'])){
-			$options['fit'] = 'inside';
+		if(isset($options['max'])){
+			$options['mode'] = 'max';
 			if(!isset($options['width'])){
-				$options['width'] = $options['inside'];
+				$options['width'] = $options['max'];
 			}
 			if(!isset($options['height'])){
-				$options['height'] = $options['inside'];
+				$options['height'] = $options['max'];
 			}
 		}
 		
 		// choix du mode
-		$mode = isset($options['fit']) && $options['fit'] == 'outside' ? 'outside' : 'inside';
+		$mode = isset($options['mode']) && $options['mode']=='min' ? 'min' : 'max';
 		
 		// forcé le redimensionnement
 		$forceResize = !empty($options['forceresize']);
@@ -161,12 +161,12 @@ abstract class Zest_File_Helper_Abstract_Convertable extends Zest_File_Helper_Ab
 		if(isset($options['width']) || isset($options['height'])){
 			
 			// gestion du max
-			if($mode == 'inside'){
+			if($mode == 'max'){
 				$needResize = (isset($options['width']) && $width > $options['width']) || (isset($options['height']) && $height > $options['height']);
 			}
 			
 			// gestion du min
-			if($mode == 'outside'){
+			if($mode == 'min'){
 				$needResize = (!isset($options['width']) || $width > $options['width']) && (!isset($options['height']) || $height > $options['height']);
 			}
 			
@@ -180,7 +180,7 @@ abstract class Zest_File_Helper_Abstract_Convertable extends Zest_File_Helper_Ab
 				}
 				
 				// gestion du max
-				if($mode == 'inside'){
+				if($mode == 'max'){
 					if($propWidth && $propHeight){
 						$prop = min($propWidth, $propHeight);
 					}
@@ -190,7 +190,7 @@ abstract class Zest_File_Helper_Abstract_Convertable extends Zest_File_Helper_Ab
 				}
 				
 				// gestion du min
-				if($mode == 'outside'){
+				if($mode == 'min'){
 					$prop = max($propWidth, $propHeight);
 				}
 				
