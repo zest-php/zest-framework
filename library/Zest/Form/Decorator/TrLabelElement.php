@@ -46,9 +46,6 @@ class Zest_Form_Decorator_TrLabelElement extends Zest_Form_Decorator_Abstract{
 			$viewHelper = $this->getElementRenderDecorator();
 			$viewHelper->setElement($element);
 			$content = $viewHelper->render($content);
-			if( $element instanceof Zend_Form_Element_Hidden || $element instanceof Zend_Form_Element_Hash ){
-				return $content;
-			}
 		}
 		
 		$tdElement = new Zest_Form_Decorator_TdElement();
