@@ -8,21 +8,6 @@
 class Zest_Form_Decorator_FormErrors extends Zest_Form_Decorator_Abstract{
 	
 	/**
-	 * @param array $array
-	 * @return array
-	 */
-	protected function flatten(array $array){
-		$return = array();
-		foreach($array as $field => $sub){
-			if(is_array($sub)){
-				$sub = $this->flatten($sub);
-			}
-			$return = array_merge($return, (array) $sub);
-		}
-		return $return;
-	}
-	
-	/**
 	 * @param string $content
 	 * @return string
 	 */
@@ -33,7 +18,10 @@ class Zest_Form_Decorator_FormErrors extends Zest_Form_Decorator_Abstract{
 		}
 		
 		// on récupère les erreurs du formulaire
-		$errors = $this->flatten($form->getMessages());
+		$errors = array();
+		foreach($form->getMessages() as $field => $messages){
+			$errors = array_merge($errors, (array) $messages);
+		}
 		if(!$errors){
 			return $content;
 		}
