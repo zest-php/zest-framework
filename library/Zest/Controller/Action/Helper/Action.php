@@ -23,11 +23,6 @@ class Zest_Controller_Action_Helper_Action extends Zend_Controller_Action_Helper
 	protected $_response = null;
 	
 	/**
-	 * @var string
-	 */
-	protected $_defaultModule = null;
-	
-	/**
 	 * @return void
 	 */
 	public function __construct(){
@@ -35,7 +30,6 @@ class Zest_Controller_Action_Helper_Action extends Zend_Controller_Action_Helper
 		$this->_request = clone $front->getRequest();
 		$this->_response = clone $front->getResponse();
 		$this->_dispatcher = clone $front->getDispatcher();
-		$this->_defaultModule = $front->getDefaultModule();
 	}
 	
 	/**
@@ -67,7 +61,7 @@ class Zest_Controller_Action_Helper_Action extends Zend_Controller_Action_Helper
 			$module = null;
 		}
 		if(is_null($module)){
-			$module = $this->_defaultModule;
+			$module = $this->_request->getModuleName();
 		}
 
 		// clone the view object to prevent over-writing of view variables
