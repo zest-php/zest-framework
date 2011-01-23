@@ -64,7 +64,15 @@ class Zest_Controller_Action_Helper_Action extends Zend_Controller_Action_Helper
 			$module = $this->_request->getModuleName();
 		}
 
-		// clone the view object to prevent over-writing of view variables
+		$front = Zest_Controller_Front::getInstance();
+		
+		// récupération de l'état du layout
+		$layout = Zest_Layout::getMvcInstance();
+		if($layout){
+			$enabled = $layout->isEnabled();
+		}
+		
+		// clonage de l'objet de vue pour éviter la collision des variables de vue
 		$viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
 		$viewRendererClone = clone $viewRenderer;
 		$viewRendererClone->setNeverRender(true);
@@ -76,12 +84,27 @@ class Zest_Controller_Action_Helper_Action extends Zend_Controller_Action_Helper
 					  	->setActionName($action)
 					  	->setDispatched(true);
 
-		$this->_dispatcher->dispatch($this->_request, $this->_response);
-
-		// reset the viewRenderer object to it's original state
+		$exception = null;
+		try{
+			$this->_dispatcher->dispatch($this->_request, $this->_response);
+		}
+		catch(Exception $e){
+			$exception = $e;
+		}
+		
+		// remise à zéro du layout
+		if($layout){
+			$layout->{$enabled ? 'enableLayout' : 'disableLayout'}();
+		}
+		
+		// remise à zéro de l'objet de vue
 		Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
 		
 		$this->_resetObjects();
+		
+		if($exception){
+			throw $exception;
+		}
 	}
 	
 }
