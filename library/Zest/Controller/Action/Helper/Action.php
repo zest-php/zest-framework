@@ -26,7 +26,7 @@ class Zest_Controller_Action_Helper_Action extends Zend_Controller_Action_Helper
 	 * @return void
 	 */
 	public function __construct(){
-		$front = Zend_Controller_Front::getInstance();
+		$front = Zest_Controller_Front::getInstance();
 		$this->_request = clone $front->getRequest();
 		$this->_response = clone $front->getResponse();
 		$this->_dispatcher = clone $front->getDispatcher();

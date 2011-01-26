@@ -78,7 +78,7 @@ class Zest_File_Helper_Url extends Zest_File_Helper_Abstract{
 //		}
 		
 		$view = Zest_View::getStaticView();
-		$url = $view->url($urlOptions, $route, true);
+		$url = $view->url($urlOptions, $route, true, true, false);
 		
 		if($serverUrl){
 			return $view->serverUrl($url);
