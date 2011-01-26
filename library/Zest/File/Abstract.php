@@ -58,7 +58,7 @@ abstract class Zest_File_Abstract{
 	 */
 	public function setPathname($pathname){
 		$pathname = str_replace(DIRECTORY_SEPARATOR, '/', $pathname);
-		$this->_pathname = $pathname;
+		$this->_pathname = trim($pathname);
 		return $this;
 	}
 	
