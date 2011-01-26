@@ -63,7 +63,7 @@ class Zest_Controller_Router_Rewrite extends Zend_Controller_Router_Rewrite{
 	 * @param boolean $encode
 	 * @return string
 	 */
-	public function assemble($userParams, $name = null, $reset = false, $encode = true){
+	public function assemble($userParams, $name = null, $reset = false, $encode = true, $prefix = true){
 		if($this->_filteredParams){
 			$filter = new Zest_Filter_Url();
 			foreach($this->_filteredParams as $paramName){
@@ -72,7 +72,7 @@ class Zest_Controller_Router_Rewrite extends Zend_Controller_Router_Rewrite{
 				}
 			}
 		}
-		if($this->_paramsPrefix){
+		if($this->_paramsPrefix && $prefix){
 			foreach($userParams as $key => $value){
 				unset($userParams[$key]);
 				$userParams[$this->_paramsPrefix.$key] = $value;
