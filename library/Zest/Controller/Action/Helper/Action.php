@@ -70,6 +70,7 @@ class Zest_Controller_Action_Helper_Action extends Zend_Controller_Action_Helper
 		$layout = Zest_Layout::getMvcInstance();
 		if($layout){
 			$enabled = $layout->isEnabled();
+			$layout->disableLayout();
 		}
 		
 		// clonage de l'objet de vue pour éviter la collision des variables de vue
@@ -92,7 +93,7 @@ class Zest_Controller_Action_Helper_Action extends Zend_Controller_Action_Helper
 			$exception = $e;
 		}
 		
-		// remise à zéro du layout
+		// restauration de l'état du layout
 		if($layout){
 			$layout->{$enabled ? 'enableLayout' : 'disableLayout'}();
 		}
