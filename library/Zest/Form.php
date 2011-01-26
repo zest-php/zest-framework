@@ -112,28 +112,7 @@ class Zest_Form extends Zend_Form{
 	 * @return Zest_Form
 	 */
 	public function addSubForm(Zend_Form $form, $name, $order = null){
-		// dans les subform, les éléments file ne prennent pas en compte la valeur belongsTo
-		foreach($form->getElements() as $element){
-			if(!$element instanceof Zend_Form_Element_File) continue;
-			
-			$suffix = 0;
-			$newName = $element->getName();
-			while($this->getElement($newName, true)){
-				$newName = $element->getName().'_'.++$suffix;
-			}
-			
-			if($suffix){
-				$elementOrder = array_search($element->getName(), array_keys($form->_order));
-				$form->removeElement($element->getName());
-				
-				$element->setName($newName);
-				if(is_int($elementOrder)){
-					$element->setOrder($elementOrder);
-				}
-				$form->addElement($element);
-			}
-		}
-		
+		$this->_autoRenameFileElements($form);
 		parent::addSubForm($form, $name, $order);
 		
 		// décorateurs par défaut
@@ -168,6 +147,39 @@ class Zest_Form extends Zend_Form{
 //		$this->addElementPrefixPath('Zest_Form_Decorator', 'Zest/Form/Decorator', Zend_Form_Element::DECORATOR);
 		$this->addElementPrefixPath('Zest_Filter', 'Zest/Filter', Zend_Form_Element::FILTER);
 		$this->addElementPrefixPath('Zest_Validate', 'Zest/Validate', Zend_Form_Element::VALIDATE);
+	}
+	
+	/**
+	 * @param Zend_Form $form
+	 * @return void
+	 */
+	protected function _autoRenameFileElements(Zend_Form $form){
+		// dans les subform, les éléments file ne prennent pas en compte la valeur belongsTo
+		foreach($form->getElements() as $element){
+			if(!$element instanceof Zend_Form_Element_File) continue;
+			
+			$suffix = 0;
+			$newName = $element->getName();
+			while($this->getElement($newName, true)){
+				$newName = $element->getName().'_'.++$suffix;
+			}
+			
+			if($suffix){
+				$elementsOrder = array_flip(array_keys($form->_order));
+				$elementOrder = isset($elementsOrder[$element->getName()]) ? $elementsOrder[$element->getName()] : null;
+				$form->removeElement($element->getName());
+				
+				$element->setName($newName);
+				if(is_int($elementOrder)){
+					$element->setOrder($elementOrder);
+				}
+				$form->addElement($element);
+			}
+		}
+		
+		foreach($form->getSubForms() as $subForm){
+			$this->_autoRenameFileElements($subForm);
+		}
 	}
 	
 }
