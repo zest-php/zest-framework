@@ -27,9 +27,9 @@ class Zest_View_Helper_Action extends Zend_View_Helper_Action{
 		$requestParams = $request->getParams();
 		
 		if(isset($params['uaid'])){
+			$paramsPrefix = $router->getParamsPrefix();
 			$post = $_POST;
 			$get = $_GET;
-			$paramsPrefix = $router->getParamsPrefix();
 			
 			$prefix = 'a_'.$params['uaid'].'_';
 			$router->setParamsPrefix($prefix);
@@ -67,11 +67,24 @@ class Zest_View_Helper_Action extends Zend_View_Helper_Action{
 			}
 		}
 		
+		// récupération de l'état du layout
+		$layout = Zest_Layout::getMvcInstance();
+		if($layout){
+			$enabled = $layout->isEnabled();
+			$layout->disableLayout();
+		}
+		
 		$params = array_merge($requestParams, $params);
 		$return = parent::action($action, $controller, $module, $params);
 		
+		// restauration de l'état du layout
+		if($layout){
+			$layout->{$enabled ? 'enableLayout' : 'disableLayout'}();
+		}
+		
 		if(isset($prefix)){
 			$return = str_replace('name="', 'name="'.$prefix, $return);
+			
 			$router->setParamsPrefix($paramsPrefix);
 			$_POST = $post;
 			$_GET = $get;
