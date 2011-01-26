@@ -33,7 +33,7 @@ class Zest_Form_Decorator_FormErrors extends Zest_Form_Decorator_Abstract{
 		}
 		
 		// on récupère les erreurs du formulaire
-		$errors = $this->flatten($form->getMessages());
+		$errors = array_unique($this->flatten($form->getMessages()));
 		if(!$errors){
 			return $content;
 		}
