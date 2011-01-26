@@ -47,7 +47,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	 * @param Zest_Db_Object $object
 	 * @return Zest_Db_Object
 	 */
-	public function create(array $data, Zest_Db_Object $object = null, array $options = array()){
+	public function create(array $data = array(), Zest_Db_Object $object = null, array $options = array()){
 		if(is_null($object)){
 			$object = new $this->_objectClass();
 			if($object instanceof Zest_Db_Object){
