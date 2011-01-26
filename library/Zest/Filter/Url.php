@@ -84,7 +84,7 @@ class Zest_Filter_Url implements Zend_Filter_Interface{
 	protected function _stripAccents($value){
 		$view = Zest_View::getStaticView();
 		
-		if(strtolower(substr(PHP_OS, 0, 3)) == 'win' || !function_exists('iconv')){
+		if(strtolower(PHP_OS) != 'linux' || !function_exists('iconv')){
 //			$value = htmlentities($value, ENT_NOQUOTES, $view->getEncoding());
 //			$value = preg_replace('#\&([A-za-z])(?:acute|cedil|circ|grave|ring|tilde|uml)\;#', '\1', $value);
 //			$value = preg_replace('#\&([A-za-z]{2})(?:lig)\;#', '\1', $value);		// pour les ligatures e.g. '&oelig;'
