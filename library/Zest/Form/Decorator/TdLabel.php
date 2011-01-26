@@ -29,6 +29,12 @@ class Zest_Form_Decorator_TdLabel extends Zest_Form_Decorator_Abstract{
 				$decorator->setElement($element);
 				$label = $decorator->render('');
 			}
+			else if(!( $element instanceof Zend_Form_Element_Submit || $element instanceof Zend_Form_Element_Image )){
+				$format = $element->isRequired() ? Zest_Form_Decorator_Label::getLabelFormatRequired() : Zest_Form_Decorator_Label::getLabelFormatNotRequired();
+				if($format){
+					$label = sprintf($format, $element->getLabel());
+				}
+			}
 		}
 		
 		$htmlTag = new Zend_Form_Decorator_HtmlTag(array(
