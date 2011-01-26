@@ -18,11 +18,25 @@ class Zest_Form_Decorator_Label extends Zend_Form_Decorator_Label{
 	protected static $_labelFormatRequired = null;
 	
 	/**
+	 * @return string
+	 */
+	public static function getLabelFormatNotRequired(){
+		return self::$_labelFormatNotRequired;
+	}
+	
+	/**
 	 * @param string $labelFormatRequired
 	 * @return void
 	 */
 	public static function setLabelFormatNotRequired($labelFormatNotRequired){
 		self::$_labelFormatNotRequired = $labelFormatNotRequired;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public static function getLabelFormatRequired(){
+		return self::$_labelFormatRequired;
 	}
 	
 	/**
@@ -42,15 +56,9 @@ class Zest_Form_Decorator_Label extends Zend_Form_Decorator_Label{
 		
 		// label format
 		if(!( $element instanceof Zend_Form_Element_Submit || $element instanceof Zend_Form_Element_Image )){
-			if($element->isRequired()){
-				if(self::$_labelFormatRequired){
-					$element->setLabel(sprintf(self::$_labelFormatRequired, $element->getLabel()));
-				}
-			}
-			else{
-				if(self::$_labelFormatNotRequired){
-					$element->setLabel(sprintf(self::$_labelFormatNotRequired, $element->getLabel()));
-				}
+			$format = $element->isRequired() ? self::$_labelFormatRequired : self::$_labelFormatNotRequired;
+			if($format){
+				$element->setLabel(sprintf($format, $element->getLabel()));
 			}
 		}
 		
