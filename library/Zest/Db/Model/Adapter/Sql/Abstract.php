@@ -92,6 +92,7 @@ abstract class Zest_Db_Model_Adapter_Sql_Abstract extends Zest_Db_Model_Adapter_
 	public function getWhereQuery(Zest_Db_Table $table, array $arrayValues, $operator){
 		$adapter = $table->getAdapter();
 		$cols = $table->info(Zest_Db_Table::COLS);
+		$tableName = $adapter->quoteIdentifier($table->info(Zest_Db_Table::NAME), true);
 		
 		$andWhere = array();
 		foreach($arrayValues as $col => $values){
@@ -102,7 +103,7 @@ abstract class Zest_Db_Model_Adapter_Sql_Abstract extends Zest_Db_Model_Adapter_
 			
 			$values = (array) $values;
 			
-			$expr = $adapter->quoteIdentifier($col, true).' '.$operator.' ?';
+			$expr = $tableName.'.'.$adapter->quoteIdentifier($col, true).' '.$operator.' ?';
 			$orWhere = array();
 			foreach($values as $value){
 				$orWhere[] = $adapter->quoteInto($expr, $value);
