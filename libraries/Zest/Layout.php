@@ -75,7 +75,11 @@ class Zest_Layout extends Zend_Layout{
 			throw new Zest_Layout_Exception(sprintf('Aucun layoutPath n\'a été renseigné pour le module "%s".', $module));
 		}
 		
-		$this->_parents[$this->_currentLayout] = array('layoutPath' => $this->_layoutPath[$module], 'layout' => $name);
+		if(!isset($this->_parents[$this->_currentLayout])){
+			$this->_parents[$this->_currentLayout] = array();
+		}
+		$this->_parents[$this->_currentLayout][] = array('layoutPath' => $this->_layoutPath[$module], 'layout' => $name);
+		
 		return $this;
 	}
 	
@@ -93,9 +97,11 @@ class Zest_Layout extends Zend_Layout{
 		$render = parent::render($name);
 		
 		if($this->_parents[$this->_currentLayout]){
-			$this->{$this->_contentKey} = $render;
-			$this->setViewScriptPath($this->_parents[$this->_currentLayout]['layoutPath']);
-			$render = $this->render($this->_parents[$this->_currentLayout]['layout']);
+			foreach($this->_parents[$this->_currentLayout] as $parent){
+				$this->{$this->_contentKey} = $render;
+				$this->setViewScriptPath($parent['layoutPath']);
+				$render = $this->render($parent['layout']);
+			}
 		}
 		
 		return $render;
