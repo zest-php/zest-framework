@@ -5,7 +5,7 @@
  * @package Zest_Controller
  * @subpackage Plugin
  */
-class Zest_Controller_Plugin_HttpRequest_JsReduce extends Zest_Controller_Plugin_HttpRequest_Reduce_Abstract{
+class Zest_Controller_Plugin_Assets_JsReduce extends Zest_Controller_Plugin_Assets_Reduce_Abstract{
 	
 	/**
 	 * @var string
@@ -54,7 +54,7 @@ class Zest_Controller_Plugin_HttpRequest_JsReduce extends Zest_Controller_Plugin
 	
 	/**
 	 * @param string $url
-	 * @return Zest_Controller_Plugin_HttpRequest_JsReduce
+	 * @return Zest_Controller_Plugin_Assets_JsReduce
 	 */
 	protected function _headAppend($url){
 		if(is_object($url)){
