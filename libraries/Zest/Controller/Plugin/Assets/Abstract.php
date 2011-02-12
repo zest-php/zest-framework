@@ -30,7 +30,7 @@ abstract class Zest_Controller_Plugin_Assets_Abstract{
 	/**
 	 * @var integer
 	 */
-	protected $_gcLifetime = 600;
+	protected $_gcLifetime = null;
 	
 	/**
 	 * @var integer
@@ -41,6 +41,15 @@ abstract class Zest_Controller_Plugin_Assets_Abstract{
 	 * @var string
 	 */
 	protected $_gcPattern = null;
+	
+	/**
+	 * @param integer $gcLifetime
+	 * @return Zest_Controller_Plugin_Assets_Abstract
+	 */
+	public function setGcLifetime($gcLifetime){
+		$this->_gcLifetime = $gcLifetime;
+		return $this;
+	}
 	
 	/**
 	 * @param Zend_Controller_Request_Abstract $request
@@ -97,7 +106,9 @@ abstract class Zest_Controller_Plugin_Assets_Abstract{
 		if(!$this->_cache) return;
 		
 		// nettoyage du cache
-		Zest_Dir::factory($this->_cache[1])->cleanGarbage($this->_gcLifetime, $this->_gcFreq, $this->_gcPattern);
+		if(!is_null($this->_gcLifetime)){
+			Zest_Dir::factory($this->_cache[1])->cleanGarbage($this->_gcLifetime, $this->_gcFreq, $this->_gcPattern);
+		}
 	}
 	
 	/**
