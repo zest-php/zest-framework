@@ -67,8 +67,8 @@ class Zest_Application_Module_Bootstrap extends Zend_Application_Module_Bootstra
 	/**
 	 * @return string
 	 */
-	public function getBasePath(){
-		return $this->getModuleBasePath($this->getModuleName());
+	public function getDirectory(){
+		return $this->getModuleDirectory($this->getModuleName());
 	}
 	
 	/**
@@ -76,14 +76,14 @@ class Zest_Application_Module_Bootstrap extends Zend_Application_Module_Bootstra
 	 * @return boolean
 	 */
 	public function hasModule($module){
-		return !is_null($this->getModuleBasePath($module));
+		return !is_null($this->getModuleDirectory($module));
 	}
 	
 	/**
 	 * @param string $module
 	 * @return string
 	 */
-	public function getModuleBasePath($module){
+	public function getModuleDirectory($module){
 		$module = strtolower($module);
 		$dirs = $this->getApplication()->getModulesDirectories();
 		if(isset($dirs[$module])){
