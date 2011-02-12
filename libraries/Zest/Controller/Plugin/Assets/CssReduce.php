@@ -5,7 +5,7 @@
  * @package Zest_Controller
  * @subpackage Plugin
  */
-class Zest_Controller_Plugin_HttpRequest_CssReduce extends Zest_Controller_Plugin_HttpRequest_Reduce_Abstract{
+class Zest_Controller_Plugin_Assets_CssReduce extends Zest_Controller_Plugin_Assets_Reduce_Abstract{
 	
 	/**
 	 * @var string
@@ -66,7 +66,7 @@ class Zest_Controller_Plugin_HttpRequest_CssReduce extends Zest_Controller_Plugi
 	/**
 	 * @param string $url
 	 * @param string $media
-	 * @return Zest_Controller_Plugin_HttpRequest_CssReduce
+	 * @return Zest_Controller_Plugin_Assets_CssReduce
 	 */
 	protected function _headAppend($url, $media = null){
 		$this->_view->head()->css($url, $media);
