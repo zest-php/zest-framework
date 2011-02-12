@@ -122,13 +122,13 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 				// modules
 				foreach($modulesDirectories as $module => $modulesDirectory){
 					$this->_set('module.'.$module, array());
-					$this->_set('base_path', $modulesDirectory);
+					$this->_set('module_directory', $modulesDirectory);
 					
 					$iniFile = $modulesDirectory.sprintf($this->_modulesConfigFormat, $module);
 					$this->_loadConfig($iniFile, 'module.'.$module);
 					$this->_recursiveReplaceVars($this->_data);
 					
-					$this->_unset('base_path');
+					$this->_unset('module_directory');
 				}
 				
 				// sauvegarde du tableau permettant le recalcul du fichier de cache
