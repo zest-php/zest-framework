@@ -129,6 +129,21 @@ class Zest_View_Helper_Head extends Zend_View_Helper_Abstract{
 	}
 	
 	/**
+	 * @param string $js
+	 * @param boolean $prepend
+	 * @return Zest_View_Helper_Head
+	 */
+	public function jsInline($js, $prepend = false){
+		if($prepend){
+			$this->view->headScript()->prependScript($js);
+		}
+		else{
+			$this->view->headScript()->appendScript($js);
+		}
+		return $this;
+	}
+	
+	/**
 	 * @param string $href
 	 * @param string $title
 	 * @param boolean $prepend
