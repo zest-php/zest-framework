@@ -203,7 +203,7 @@ class Zest_Db_Object extends Zest_Data{
 	public function __call($method, $args){
 		if(substr(strtolower($method), 0, 6) == 'findby'){
 			$this->_data = array();
-			$args = array_pad($args, 1, null);
+			if(!isset($args[0])) $args[0] = null;
 			array_splice($args, 1, 0, array($this));
 			return call_user_func_array(array($this->getMapper(), $method), $args);
 		}
