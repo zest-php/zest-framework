@@ -53,7 +53,11 @@ class Zest_Db_Model{
 	 */
 	public static function getInstance($className, $arg = null){
 		if(!isset(self::$_instances[$className])){
-			self::$_instances[$className] = new $className($arg);
+			$mapper = new $className($arg);
+			if(!$mapper instanceof Zest_Db_Model){
+				throw new Zest_Db_Exception('Le model doit hériter de Zest_Db_Model.');
+			}
+			self::$_instances[$className] = $mapper;
 		}
 		return self::$_instances[$className];
 	}
