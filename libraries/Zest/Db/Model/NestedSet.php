@@ -176,7 +176,7 @@ class Zest_Db_Model_NestedSet{
 			}
 			
 			// ajout dans le registre et remplacement dans la tableau retourné
-			$registry[$registryKey] = $arrayObjects[$key] = $newObject->pushData();
+			$registry[$registryKey] = $arrayObjects[$key] = $newObject->setDataToClean();
 		}
 		
 		return $arrayObjects;

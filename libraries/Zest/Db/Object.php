@@ -14,7 +14,7 @@ class Zest_Db_Object extends Zest_Data{
 	/**
 	 * @var array
 	 */
-	protected $_cleanData = array();
+	protected $_clean = array();
 	
 	/**
 	 * @param array $data
@@ -31,73 +31,73 @@ class Zest_Db_Object extends Zest_Data{
 	/**
 	 * @return Zest_Db_Object
 	 */
-	public function pushData(){
-		$this->_cleanData = $this->_data;
+	public function setDataToClean(){
+		$this->_clean = $this->_data;
 		return $this;
 	}
 	
 	/**
 	 * @return Zest_Db_Object
 	 */
-	public function pullCleanData(){
-		$this->_data = $this->_cleanData;
+	public function setCleanToData(){
+		$this->_data = $this->_clean;
 		return $this;
 	}
 	
 	/**
 	 * @return Zest_Db_Object
 	 */
-	public function hasCleanData(){
-		return !empty($this->_cleanData);
+	public function hasClean(){
+		return !empty($this->_clean);
 	}
 	
 	/**
 	 * @param mixed $data
-	 * @param mixed $cleanData
+	 * @param mixed $clean
 	 * @return boolean
 	 */
-	protected function _isClean($data, $cleanData){
+	protected function _isClean($data, $clean){
 		// Zest_Db_Object
 		if($data instanceof Zest_Db_Object){
 			/**
 			 * remplacement de l'objet
-			 * $data et $cleanData ne font pas référence au même objet
+			 * $data et $clean ne font pas référence au même objet
 			 * on compare les données de chaque objet (_data)
 			 */
-			if($cleanData instanceof Zest_Db_Object){
-				if(!$this->_isClean($data->_data, $cleanData->_data)){
+			if($clean instanceof Zest_Db_Object){
+				if(!$this->_isClean($data->_data, $clean->_data)){
 					return false;
 				}
 			}
 			
 			/*
 			 * modification de l'objet
-			 * $data et $cleanData font référence au même objet
-			 * on compare les données uniquement sur $data (_data et _cleanData)
+			 * $data et $clean font référence au même objet
+			 * on compare les données uniquement sur $data (_data et _clean)
 			 */
-			return $this->_isClean($data->_data, $data->_cleanData);
+			return $this->_isClean($data->_data, $data->_clean);
 		}
 		
 		// integer, float, string, boolean
-		if(is_scalar($data) && is_scalar($cleanData)){
-			return $data == $cleanData;
+		if(is_scalar($data) && is_scalar($clean)){
+			return $data == $clean;
 		}
 		
-		if(gettype($data) != gettype($cleanData)){
+		if(gettype($data) != gettype($clean)){
 			return false;
 		}
 		
 		// array, object
 		$data = (array) $data;
-		$cleanData = (array) $cleanData;
+		$clean = (array) $clean;
 		
 		// vérification de la cohérence entre les deux tableaux
-		if(array_keys($data) != array_keys($cleanData)){
+		if(array_keys($data) != array_keys($clean)){
 			return false;
 		}
 		
 		foreach($data as $key => $value){
-			if(!$this->_isClean($value, $cleanData[$key])){
+			if(!$this->_isClean($value, $clean[$key])){
 				return false;
 			}
 		}
@@ -111,11 +111,11 @@ class Zest_Db_Object extends Zest_Data{
 	 */
 	public function isClean($key = null){
 		if(is_null($key)){
-			return $this->_isClean($this->_data, $this->_cleanData);
+			return $this->_isClean($this->_data, $this->_clean);
 		}
 		
 		// une des deux valeurs existe et l'autre non
-		if(isset($this->_data[$key]) != isset($this->_cleanData[$key])){
+		if(isset($this->_data[$key]) != isset($this->_clean[$key])){
 			return false;
 		}
 		
@@ -124,7 +124,7 @@ class Zest_Db_Object extends Zest_Data{
 			return true;
 		}
 		
-		return $this->_isClean($this->_data[$key], $this->_cleanData[$key]);
+		return $this->_isClean($this->_data[$key], $this->_clean[$key]);
 	}
 	
 	/**
@@ -132,7 +132,7 @@ class Zest_Db_Object extends Zest_Data{
 	 */
 	public function getCleanObject(){
 		$object = new $this();
-		$object->setData($this->_cleanData)->pushData();
+		$object->setData($this->_clean)->setDataToClean();
 		return $object;
 	}
 

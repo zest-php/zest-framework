@@ -184,7 +184,7 @@ class Zest_Db_Model{
 		}
 		$object = new $this->_objectClass();
 		if($object instanceof Zest_Db_Object){
-			$object->setData($source)->pushData();
+			$object->setData($source)->setDataToClean();
 		}
 		else{
 			foreach($source as $col => $value){
@@ -343,7 +343,7 @@ class Zest_Db_Model{
 		if($save && $request->object instanceof Zest_Db_Object){
 			$refreshclean = $request->getOption('refreshclean');
 			if(is_null($refreshclean) || $refreshclean){
-				$request->object->pushData();
+				$request->object->setDataToClean();
 			}
 		}
 		
