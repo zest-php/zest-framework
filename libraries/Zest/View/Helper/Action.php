@@ -30,6 +30,7 @@ class Zest_View_Helper_Action extends Zend_View_Helper_Action{
 			$paramsPrefix = $router->getParamsPrefix();
 			$post = $_POST;
 			$get = $_GET;
+			$files = $_FILES;
 			
 			$prefix = 'a_'.$params['uaid'].'_';
 			$router->setParamsPrefix($prefix);
@@ -42,12 +43,8 @@ class Zest_View_Helper_Action extends Zend_View_Helper_Action{
 					
 					// ajout des nouvelles clefs sans le préfix
 					$params[$newKey] = $value;
-					if(isset($_POST[$key])){
-						$_POST[$newKey] = $value;
-					}
-					if(isset($_GET[$key])){
-						$_GET[$newKey] = $value;
-					}
+					if(isset($_POST[$key])) $_POST[$newKey] = $value;
+					if(isset($_GET[$key])) $_GET[$newKey] = $value;
 					
 					// suppression des anciennes clefs avec le préfix
 					unset($requestParams[$key], $_POST[$key], $_GET[$key]);
@@ -63,6 +60,14 @@ class Zest_View_Helper_Action extends Zend_View_Helper_Action{
 							$module = $value;
 							break;
 					}
+				}
+			}
+			
+			foreach($_FILES as $key => $value){
+				if(strpos($key, $prefix) === 0){
+					$newKey = str_replace($prefix, '', $key);
+					$_FILES[$newKey] = $value;
+					unset($_FILES[$key]);
 				}
 			}
 		}
@@ -88,6 +93,7 @@ class Zest_View_Helper_Action extends Zend_View_Helper_Action{
 			$router->setParamsPrefix($paramsPrefix);
 			$_POST = $post;
 			$_GET = $get;
+			$_FILES = $files;
 		}
 		
 		return $return;
