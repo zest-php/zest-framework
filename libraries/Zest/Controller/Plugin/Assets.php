@@ -5,7 +5,7 @@
  * @package Zest_Controller
  * @subpackage Plugin
  */
-class Zest_Controller_Plugin_HttpRequest extends Zend_Controller_Plugin_Abstract{
+class Zest_Controller_Plugin_Assets extends Zend_Controller_Plugin_Abstract{
 	
 	/**
 	 * @var boolean
@@ -23,17 +23,17 @@ class Zest_Controller_Plugin_HttpRequest extends Zend_Controller_Plugin_Abstract
 	protected $_reduce = true;
 	
 	/**
-	 * @var Zest_Controller_Plugin_HttpRequest_CssSprite
+	 * @var Zest_Controller_Plugin_Assets_CssSprite
 	 */
 	protected $_cssSprite = null;
 	
 	/**
-	 * @var Zest_Controller_Plugin_HttpRequest_CssReduce
+	 * @var Zest_Controller_Plugin_Assets_CssReduce
 	 */
 	protected $_cssReduce = null;
 	
 	/**
-	 * @var Zest_Controller_Plugin_HttpRequest_JsReduce
+	 * @var Zest_Controller_Plugin_Assets_JsReduce
 	 */
 	protected $_jsReduce = null;
 	
@@ -41,14 +41,14 @@ class Zest_Controller_Plugin_HttpRequest extends Zend_Controller_Plugin_Abstract
 	 * @return void
 	 */
 	public function __construct(){
-		$this->_cssSprite = new Zest_Controller_Plugin_HttpRequest_CssSprite();
-		$this->_cssReduce = new Zest_Controller_Plugin_HttpRequest_CssReduce();
-		$this->_jsReduce = new Zest_Controller_Plugin_HttpRequest_JsReduce();
+		$this->_cssSprite = new Zest_Controller_Plugin_Assets_CssSprite();
+		$this->_cssReduce = new Zest_Controller_Plugin_Assets_CssReduce();
+		$this->_jsReduce = new Zest_Controller_Plugin_Assets_JsReduce();
 	}
 	
 	/**
 	 * @param Zend_Controller_Request_Abstract $request
-	 * @return Zest_Controller_Plugin_HttpRequest
+	 * @return Zest_Controller_Plugin_Assets
 	 */
 	public function setRequest(Zend_Controller_Request_Abstract $request){
 		$this->_cssReduce->setRequest($request);
@@ -67,21 +67,21 @@ class Zest_Controller_Plugin_HttpRequest extends Zend_Controller_Plugin_Abstract
 	}
 	
 	/**
-	 * @return Zest_Controller_Plugin_HttpRequest_CssSprite
+	 * @return Zest_Controller_Plugin_Assets_CssSprite
 	 */
 	public function getCssSprite(){
 		return $this->_cssSprite;
 	}
 	
 	/**
-	 * @return Zest_Controller_Plugin_HttpRequest_CssReduce
+	 * @return Zest_Controller_Plugin_Assets_CssReduce
 	 */
 	public function getCssReduce(){
 		return $this->_cssReduce;
 	}
 	
 	/**
-	 * @return Zest_Controller_Plugin_HttpRequest_JsReduce
+	 * @return Zest_Controller_Plugin_Assets_JsReduce
 	 */
 	public function getJsReduce(){
 		return $this->_jsReduce;
@@ -89,7 +89,7 @@ class Zest_Controller_Plugin_HttpRequest extends Zend_Controller_Plugin_Abstract
 	
 	/**
 	 * @param boolean $minify
-	 * @return Zest_Controller_Plugin_HttpRequest
+	 * @return Zest_Controller_Plugin_Assets
 	 */
 	public function setMinify($minify){
 		$this->_minify = (boolean) $minify;
@@ -98,7 +98,7 @@ class Zest_Controller_Plugin_HttpRequest extends Zend_Controller_Plugin_Abstract
 	
 	/**
 	 * @param boolean $sprite
-	 * @return Zest_Controller_Plugin_HttpRequest
+	 * @return Zest_Controller_Plugin_Assets
 	 */
 	public function setSprite($sprite){
 		$this->_sprite = (boolean) $sprite;
@@ -107,7 +107,7 @@ class Zest_Controller_Plugin_HttpRequest extends Zend_Controller_Plugin_Abstract
 	
 	/**
 	 * @param boolean $reduce
-	 * @return Zest_Controller_Plugin_HttpRequest
+	 * @return Zest_Controller_Plugin_Assets
 	 */
 	public function setReduce($reduce){
 		$this->_reduce = (boolean) $reduce;
