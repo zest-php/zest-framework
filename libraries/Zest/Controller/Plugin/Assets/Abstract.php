@@ -5,7 +5,7 @@
  * @package Zest_Controller
  * @subpackage Plugin
  */
-abstract class Zest_Controller_Plugin_HttpRequest_Abstract{
+abstract class Zest_Controller_Plugin_Assets_Abstract{
 	
 	/**
 	 * @var Zend_Controller_Request_Abstract
@@ -44,7 +44,7 @@ abstract class Zest_Controller_Plugin_HttpRequest_Abstract{
 	
 	/**
 	 * @param Zend_Controller_Request_Abstract $request
-	 * @return Zest_Controller_Plugin_HttpRequest_Abstract
+	 * @return Zest_Controller_Plugin_Assets_Abstract
 	 */
 	public function setRequest($request){
 		$this->_request = $request;
@@ -53,7 +53,7 @@ abstract class Zest_Controller_Plugin_HttpRequest_Abstract{
 	
 	/**
 	 * @param Zest_View $view
-	 * @return Zest_Controller_Plugin_HttpRequest_Abstract
+	 * @return Zest_Controller_Plugin_Assets_Abstract
 	 */
 	public function setView($view){
 		$this->_view = $view;
@@ -63,7 +63,7 @@ abstract class Zest_Controller_Plugin_HttpRequest_Abstract{
 	/**
 	 * @param string $url
 	 * @param string $path
-	 * @return Zest_Controller_Plugin_HttpRequest_Abstract
+	 * @return Zest_Controller_Plugin_Assets_Abstract
 	 */
 	public function addSource($url, $path){
 		if(substr($url, -1) != '/'){
@@ -80,7 +80,7 @@ abstract class Zest_Controller_Plugin_HttpRequest_Abstract{
 	/**
 	 * @param string $url
 	 * @param string $path
-	 * @return Zest_Controller_Plugin_HttpRequest_Abstract
+	 * @return Zest_Controller_Plugin_Assets_Abstract
 	 */
 	public function setCache($url, $path){
 		$path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
