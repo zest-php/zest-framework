@@ -17,16 +17,26 @@ class Zest_Application_Module_Autoloader extends Zend_Application_Module_Autoloa
 	
 	/**
 	 * @param string $class
-	 * @return boolean
+	 * @return mixed
 	 */
-	public function getClassPath($class){
-		$classPath = parent::getClassPath($class);
-		if(!$classPath){
-//			$class = preg_replace('/^'.$this->_namespace.'_/', $this->_namespace.'_Library_', $class);
-			$class = $this->_namespace.'_Library'.substr($class, strlen($this->_namespace));
-			return parent::getClassPath($class);
+	public function autoload($class){
+		$classPath = $this->getClassPath($class);
+		
+		if(strpos($class, $this->_namespace.'_Library') === 0){
+			$expected = $this->_namespace.substr($class, strlen($this->_namespace.'_Library'));
+			trigger_error(sprintf('L\'espace de nom "library" est mal utilisé ("%s" => "%s").', $class, $expected), E_USER_ERROR);
 		}
-		return $classPath;
+		
+		if(!$classPath){
+			$class = $this->_namespace.'_Library'.substr($class, strlen($this->_namespace));
+			$classPath = $this->getClassPath($class);
+		}
+		
+		if($classPath){
+			return include $classPath;
+		}
+		
+		return false;
 	}
 	
 }
