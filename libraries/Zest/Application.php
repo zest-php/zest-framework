@@ -19,19 +19,14 @@ class Zest_Application extends Zend_Application{
 		parent::__construct($environment);
 		
 		// initialisations propres au framework Zest
-		
-			// autoloader namespace
-			$this->setAutoloaderNamespaces(array('Zest'));
-			
-			// frontcontroller.actionhelperpaths
-			Zend_Controller_Action_HelperBroker::addPrefix('Zest_Controller_Action_Helper');
-			
-			// pluginpaths
-			$this->getBootstrap()->getPluginLoader()->addPrefixPath('Zest_Application_Resource', 'Zest/Application/Resource');
+		$this->_initZestPaths();
 		
 		// même container pour tous les boostraps (!= new Zend_Registry)
 		$container = Zend_Registry::getInstance();
 		$this->getBootstrap()->setContainer($container);
+		
+		// environnement
+		$container->environment = $this->getEnvironment();
 			
 		if(!is_null($options)){
 			// options
@@ -60,6 +55,8 @@ class Zest_Application extends Zend_Application{
 	public function __wakeup(){
 		$this->_autoloader = Zend_Loader_Autoloader::getInstance();
 		
+		$this->_initZestPaths();
+		
 		$registry = $this->getBootstrap()->getContainer();
 		Zend_Registry::setInstance($registry);
 		
@@ -73,6 +70,20 @@ class Zest_Application extends Zend_Application{
 			Zest_Controller_Front::setInstance($registry->frontcontroller);
 			Zest_Config::setInstance($registry->config);
 		}
+	}
+	
+	/**
+	 * @return void
+	 */
+	protected function _initZestPaths(){
+		// autoloadernamespaces
+		$this->setAutoloaderNamespaces(array('Zest'));
+		
+		// frontcontroller.actionhelperpaths
+		Zend_Controller_Action_HelperBroker::addPrefix('Zest_Controller_Action_Helper');
+		
+		// pluginpaths
+		$this->getBootstrap()->getPluginLoader()->addPrefixPath('Zest_Application_Resource', 'Zest/Application/Resource');
 	}
 	
 	/**
@@ -234,9 +245,8 @@ class Zest_Application extends Zend_Application{
 	 * @return array
 	 */
 	public function getModulesVersions(){
-		if(!$this->hasOption('_modulesdirectoriesloaded')){
-			$this->getModulesDirectories();
-		}
+		// on s'assure que les dossiers des modules soient déjà chargés
+		$this->getModulesDirectories();
 		return $this->getOption('modules_versions');
 	}
 	
