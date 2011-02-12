@@ -42,6 +42,16 @@ class Zest_Form_Element_File extends Zend_Form_Element_File{
 	}
 	
 	/**
+	 * @return string
+	 */
+	public function getPathname(){
+		if($this->getValue()){
+			return $this->getDestination().'/'.$this->getValue();
+		}
+		return null;
+	}
+	
+	/**
 	 * @param Zend_View_Interface $view
 	 * @return string
 	 */
