@@ -5,7 +5,7 @@
  * @package Zest_Controller
  * @subpackage Plugin
  */
-class Zest_Controller_Plugin_HttpRequest_CssSprite extends Zest_Controller_Plugin_HttpRequest_Abstract{
+class Zest_Controller_Plugin_Assets_CssSprite extends Zest_Controller_Plugin_Assets_Abstract{
 
 	/**
 	 * @var array
@@ -73,7 +73,7 @@ class Zest_Controller_Plugin_HttpRequest_CssSprite extends Zest_Controller_Plugi
 	protected $_gcPattern = '*.css';
 
 	/**
-	 * @return Zest_Controller_Plugin_HttpRequest_CssSprite
+	 * @return Zest_Controller_Plugin_Assets_CssSprite
 	 */
 	public function process(){
 		parent::process();

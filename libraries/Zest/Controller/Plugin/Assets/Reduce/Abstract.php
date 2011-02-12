@@ -5,7 +5,7 @@
  * @package Zest_Controller
  * @subpackage Plugin
  */
-abstract class Zest_Controller_Plugin_HttpRequest_Reduce_Abstract extends Zest_Controller_Plugin_HttpRequest_Abstract{
+abstract class Zest_Controller_Plugin_Assets_Reduce_Abstract extends Zest_Controller_Plugin_Assets_Abstract{
 	
 	/**
 	 * @param string $code
@@ -15,7 +15,7 @@ abstract class Zest_Controller_Plugin_HttpRequest_Reduce_Abstract extends Zest_C
 	
 	/**
 	 * @param string $url
-	 * @return Zest_Controller_Plugin_HttpRequest_CssReduce
+	 * @return Zest_Controller_Plugin_Assets_CssReduce
 	 */
 	abstract protected function _headAppend($url);
 		
@@ -23,7 +23,7 @@ abstract class Zest_Controller_Plugin_HttpRequest_Reduce_Abstract extends Zest_C
 	 * @param string $code
 	 * @param string $extension
 	 * @param string $headAppend2ndArg
-	 * @return Zest_Controller_Plugin_HttpRequest_Abstract
+	 * @return Zest_Controller_Plugin_Assets_Abstract
 	 */
 	protected function _writeCache($code, $minify, $extension, $headAppend2ndArg = null){
 		$code = trim($code);
