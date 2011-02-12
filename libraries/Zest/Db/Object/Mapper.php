@@ -85,7 +85,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 		$request->setOption($options);
 		$find = $this->get($request);
 		if($find){
-			$object->setData($find->toArray())->pushData();
+			$object->setData($find->toArray())->setDataToClean();
 		}
 		return $object;
 	}
