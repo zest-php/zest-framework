@@ -9,7 +9,7 @@ class Zest_Crypt_Mcrypt extends Zest_Crypt_Abstract{
 	/**
 	 * @var string
 	 */
-	protected $_key = 'Classe Zest_Crypt_Mcrypt du Zest Framework';
+	protected $_key = null;
 	
 	/**
 	 * @var array
@@ -69,6 +69,9 @@ class Zest_Crypt_Mcrypt extends Zest_Crypt_Abstract{
 	 */
 	protected function _initCipher($key){
 		if(!$key){
+			if(is_null($this->_key)){
+				throw new Zest_Crypt_Exception('La clef d\'encodage doit être renseignée.');
+			}
 			$key = $this->_key;
 		}
 
