@@ -10,17 +10,27 @@ class Zest_Controller_Plugin_Assets extends Zend_Controller_Plugin_Abstract{
 	/**
 	 * @var boolean
 	 */
-	protected $_minify = true;
+	protected $_sprite = false;
 	
 	/**
 	 * @var boolean
 	 */
-	protected $_sprite = true;
+	protected $_minifyCss = true;
 	
 	/**
 	 * @var boolean
 	 */
-	protected $_reduce = true;
+	protected $_minifyJs = false;
+	
+	/**
+	 * @var boolean
+	 */
+	protected $_reduceCss = true;
+	
+	/**
+	 * @var boolean
+	 */
+	protected $_reduceJs = true;
 	
 	/**
 	 * @var Zest_Controller_Plugin_Assets_CssSprite
@@ -88,11 +98,20 @@ class Zest_Controller_Plugin_Assets extends Zend_Controller_Plugin_Abstract{
 	}
 	
 	/**
-	 * @param boolean $minify
+	 * @param boolean $minifyCss
 	 * @return Zest_Controller_Plugin_Assets
 	 */
-	public function setMinify($minify){
-		$this->_minify = (boolean) $minify;
+	public function setMinifyCss($minifyCss){
+		$this->_minifyCss = (boolean) $minifyCss;
+		return $this;
+	}
+	
+	/**
+	 * @param boolean $minifyJs
+	 * @return Zest_Controller_Plugin_Assets
+	 */
+	public function setMinifyJs($minifyJs){
+		$this->_minifyJs = (boolean) $minifyJs;
 		return $this;
 	}
 	
@@ -106,11 +125,31 @@ class Zest_Controller_Plugin_Assets extends Zend_Controller_Plugin_Abstract{
 	}
 	
 	/**
-	 * @param boolean $reduce
+	 * @param boolean $reduceCss
 	 * @return Zest_Controller_Plugin_Assets
 	 */
-	public function setReduce($reduce){
-		$this->_reduce = (boolean) $reduce;
+	public function setReduceCss($reduceCss){
+		$this->_reduceCss = (boolean) $reduceCss;
+		return $this;
+	}
+	
+	/**
+	 * @param boolean $reduceJs
+	 * @return Zest_Controller_Plugin_Assets
+	 */
+	public function setReduceJs($reduceJs){
+		$this->_reduceJs = (boolean) $reduceJs;
+		return $this;
+	}
+	
+	/**
+	 * @param integer $lifetime
+	 * @return Zest_Controller_Plugin_Assets
+	 */
+	public function setGcLifetime($lifetime){
+		$this->_cssSprite->setGcLifetime($lifetime);
+		$this->_cssReduce->setGcLifetime($lifetime);
+		$this->_jsReduce->setGcLifetime($lifetime);
 		return $this;
 	}
 	
@@ -124,10 +163,11 @@ class Zest_Controller_Plugin_Assets extends Zend_Controller_Plugin_Abstract{
 		if($this->_sprite){
 			$this->_cssSprite->setView($view)->process();
 		}
-		
-		if($this->_reduce){
-			$this->_cssReduce->setView($view)->process($this->_minify);
-			$this->_jsReduce->setView($view)->process($this->_minify);
+		if($this->_reduceCss){
+			$this->_cssReduce->setView($view)->process($this->_minifyCss);
+		}
+		if($this->_reduceJs){
+			$this->_jsReduce->setView($view)->process($this->_minifyJs);
 		}
 	}
 	
