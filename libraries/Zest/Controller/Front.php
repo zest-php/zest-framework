@@ -7,6 +7,11 @@
 class Zest_Controller_Front extends Zend_Controller_Front{
 	
 	/**
+	 * @var array
+	 */
+	protected $_modulesUrls = array();
+	
+	/**
 	 * @return Zest_Controller_Front
 	 */
 	public static function getInstance(){
@@ -28,10 +33,52 @@ class Zest_Controller_Front extends Zend_Controller_Front{
 	 * @param string $module
 	 * @return string
 	 */
-	public function getModuleUrl($module){
-		$source = dirname($this->getRequest()->getServer('SCRIPT_FILENAME'));
-		$destination = dirname($this->getModuleDirectory('gui'));
-		return rtrim($this->getRequest()->getBaseUrl(), '/').'/'.$this->_getRelativeDir($source, $destination);
+	public function getModuleUrl($module, $clean = true){
+		$module = strtolower($module);
+		
+		if(isset($this->_modulesUrls[$module])){
+			return $this->_modulesUrls[$module];
+		}
+		
+		$url = null;
+		
+		$destination = str_replace(DIRECTORY_SEPARATOR, '/', $this->getModuleDirectory($module));
+		$destination = trim($destination, '/');
+		
+		$documentRoot = $this->getRequest()->getServer('DOCUMENT_ROOT');
+		$scriptFilename = $this->getRequest()->getServer('SCRIPT_FILENAME');
+		
+		if(is_null($documentRoot)){
+			$scriptFilename = str_replace(DIRECTORY_SEPARATOR, '/', dirname($scriptFilename));
+			$scriptFilename = trim($scriptFilename, '/');
+			
+			$relativeDir = $this->_getRelativeDir($scriptFilename, $destination);
+			$baseUrl = trim($this->getRequest()->getBaseUrl(), '/');
+			$url = '/'.$baseUrl.'/'.$relativeDir;
+			
+			if($clean){
+				$count = substr_count($url, '../');
+				if($count){
+					if($count > count(explode('/', $baseUrl))){
+						throw new Zest_Controller_Exception(sprintf('Le module "%s" ne semble pas être accessible par HTTP.', $module));
+					}
+					$url = preg_replace('#(/[^/]+){'.$count.'}(/..){'.$count.'}#', '', $url);
+				}
+			}
+		}
+		else{
+			$documentRoot = str_replace(DIRECTORY_SEPARATOR, '/', $documentRoot);
+			$documentRoot = trim($documentRoot, '/');
+			
+			if(!is_int(strpos($destination, $documentRoot))){
+				throw new Zest_Controller_Exception(sprintf('Le module "%s" ne semble pas être accessible par HTTP.', $module));
+			}
+			$url = str_replace($documentRoot, '', $destination).'/';
+		}
+		
+		$this->_modulesUrls[$module] = $url;
+		
+		return $url;
 	}
 	
 	/**
@@ -39,12 +86,9 @@ class Zest_Controller_Front extends Zend_Controller_Front{
 	 * @param string $destinationDir
 	 * @return string
 	 */
-	protected function _getRelativeDir($sourceDir, $destinationDir){
-		$source = str_replace(DIRECTORY_SEPARATOR, '/', $sourceDir);
-		$destination = str_replace(DIRECTORY_SEPARATOR, '/', $destinationDir);
-				
-		$source = explode('/', trim($source, '/'));
-		$destination = explode('/', trim($destination, '/'));
+	private function _getRelativeDir($sourceDir, $destinationDir){
+		$source = explode('/', $sourceDir);
+		$destination = explode('/', $destinationDir);
 		
 		foreach($source as $key => $part){
 			if($part === $destination[$key]){
@@ -54,7 +98,7 @@ class Zest_Controller_Front extends Zend_Controller_Front{
 				break;
 			}
 		}
-		return str_repeat('../', count($source)).implode('/', $destination);
+		return str_repeat('../', count($source)).implode('/', $destination).'/';
 	}
 	
 	/**
