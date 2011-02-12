@@ -146,7 +146,8 @@ class Zest_Error_Handler extends Zest_Log_Abstract{
 			'type' => $errno,
 			'message' => $errstr,
 			'file' => $errfile,
-			'line' => $errline
+			'line' => $errline,
+			'context' => $errcontext
 		));
 	}
 	
@@ -157,6 +158,20 @@ class Zest_Error_Handler extends Zest_Log_Abstract{
 		if($error = error_get_last()){
 			return $this->_handleError($error);
 		}
+	}
+	
+	/**
+	 * @param Exception $e
+	 * @return void
+	 */
+	public static function handleException(Exception $e){
+		self::_getInstance()->_handleError(array(
+			'type' => $e->getCode(),
+			'message' => $e->getMessage(),
+			'file' => $e->getFile(),
+			'line' => $e->getLine(),
+			'context' => $e->getTraceAsString()
+		));
 	}
 	
 }
