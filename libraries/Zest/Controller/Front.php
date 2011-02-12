@@ -121,4 +121,20 @@ class Zest_Controller_Front extends Zend_Controller_Front{
 		return $this->_dispatcher;
 	}
 	
+	/**
+	 * @param Zend_Controller_Request_Abstract $request
+	 * @param Zend_Controller_Response_Abstract $response
+	 * @return void|Zend_Controller_Response_Abstract
+	 */
+	public function dispatch(Zend_Controller_Request_Abstract $request = null, Zend_Controller_Response_Abstract $response = null){
+		if(!$this->getParam('noErrorHandler') && !$this->_plugins->hasPlugin('Zest_Controller_Plugin_ErrorHandler')){
+			$this->_plugins->registerPlugin(new Zest_Controller_Plugin_ErrorHandler(), 100);
+		}
+		
+		// on désactive ErrorHandler dans parent::dispatch pour gérer le plugin juste au dessus
+		$this->setParam('noErrorHandler', 'zest (false)');
+		
+		return parent::dispatch($request, $response);
+	}
+	
 }
