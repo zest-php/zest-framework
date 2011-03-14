@@ -12,16 +12,24 @@ class Zest_Error_Handler extends Zest_Log_Abstract{
 	protected static $_instance = null;
 	
 	/**
+	 * @var string
 	 */
-	const TYPE_FATAL = 'fatal';
+	const TYPE_NOTICE = 'notice';
 	
 	/**
+	 * @var string
 	 */
 	const TYPE_WARNING = 'warning';
 	
 	/**
+	 * @var string
 	 */
-	const TYPE_NOTICE = 'notice';
+	const TYPE_EXCEPTION = 'exception';
+	
+	/**
+	 * @var string
+	 */
+	const TYPE_FATAL = 'fatal';
 	
 	/**
 	 * @return void
@@ -45,7 +53,6 @@ class Zest_Error_Handler extends Zest_Log_Abstract{
 	 */
 	protected function _init(){
 		set_error_handler(array($this, 'handleError')) ;
-		register_shutdown_function(array($this, 'handleFatal')) ;
 	}
 	
 	/**
@@ -79,61 +86,39 @@ class Zest_Error_Handler extends Zest_Log_Abstract{
 	 * @return integer|null
 	 */
 	protected function _getPriority($error){
-		if(is_numeric($error)){
-			switch($error){
-				case E_STRICT:					// 2048
-					return null;
-					
-				case E_ERROR:					// 1
-				case E_PARSE:					// 4
-				case E_CORE_ERROR:				// 16
-				case E_COMPILE_ERROR:			// 64
-				case E_USER_ERROR:				// 256
-				case E_RECOVERABLE_ERROR:		// 4096
-					$error = self::TYPE_FATAL;
-					break;
-				
-				case E_WARNING:					// 2
-				case E_CORE_WARNING:			// 32
-				case E_COMPILE_WARNING:			// 128
-				case E_USER_WARNING:			// 512
-					$error = self::TYPE_WARNING;
-					break;
-					
-				case E_NOTICE:					// 8
-				case E_USER_NOTICE:				// 1024
-					$error = self::TYPE_NOTICE;
-					break;
-			}
-		}
 		switch($error){
-			case self::TYPE_FATAL:
-				return Zend_Log::ERR;
-			case self::TYPE_WARNING:
-				return Zend_Log::WARN;
 			case self::TYPE_NOTICE:
 				return Zend_Log::NOTICE;
+			case self::TYPE_WARNING:
+				return Zend_Log::WARN;
+			case self::TYPE_EXCEPTION:
+				return Zend_Log::ERR;
+			case self::TYPE_FATAL:
+				return Zend_Log::ALERT;
 		}
 		return null;
 	}
 	
 	/**
 	 * @param array $error
+	 * @param boolean $forceLog
 	 * @return false
 	 */
-	protected function _handleError(array $error){
-		if($priority = $this->_getPriority($error['type'])){
+	protected function _handleError($type, array $error){
+		if($priority = $this->_getPriority($type)){
 			$message = array(
-				'ERROR' => print_r($error, true),
-				'SERVER' => print_r($_SERVER, true),
-				'$_GET' => print_r($_GET, true),
-				'$_POST' => print_r($_POST, true),
-				'$_FILES' => print_r($_FILES, true)
+				'ERROR' => $error,
+				'SERVER' => $_SERVER,
+				'$_GET' => $_GET,
+				'$_POST' => $_POST,
+				'$_FILES' => $_FILES
 			);
-			$this->_getLogger()->log($message, $priority);
-		}			
-		
-		return false; // PHP 5.2.0 : false doit être retourné pour peupler $php_errormsg
+			try{
+				$this->_getLogger()->log($message, $priority);
+			}
+			catch(Zend_Exception $e){
+			}
+		}
 	}
 	
 	/**
@@ -148,22 +133,54 @@ class Zest_Error_Handler extends Zest_Log_Abstract{
 		// si l'erreur est supprimée par un @
 		if(error_reporting() == 0) return;
 		
-		return $this->_handleError(array(
-			'type' => $errno,
-			'message' => $errstr,
-			'file' => $errfile,
-			'line' => $errline,
-			'context' => $errcontext
-		));
-	}
-	
-	/**
-	 * @return void|false
-	 */
-	public function handleFatal(){
-		if($error = error_get_last()){
-			return $this->_handleError($error);
+		$type = null;
+		switch($errno){
+			case E_NOTICE:					// 8
+			case E_USER_NOTICE:				// 1024
+				$type = self::TYPE_NOTICE;
+				break;
+			
+			case E_WARNING:					// 2
+			case E_CORE_WARNING:			// 32
+			case E_COMPILE_WARNING:			// 128
+			case E_USER_WARNING:			// 512
+				$type = self::TYPE_WARNING;
+				break;
+				
+			case E_ERROR:					// 1
+			case E_PARSE:					// 4
+			case E_CORE_ERROR:				// 16
+			case E_COMPILE_ERROR:			// 64
+			case E_USER_ERROR:				// 256
+			case E_RECOVERABLE_ERROR:		// 4096
+				$type = self::TYPE_FATAL;
+				break;
+				
+			case E_STRICT:					// 2048
+				$type = null;
+				break;
 		}
+		
+		if($type){
+			$this->_handleError($type, array(
+				'type' => $type,
+				'code' => $errno,
+				'message' => $errstr,
+				'file' => $errfile,
+				'line' => $errline
+			));
+		}
+		
+		/**
+		 * PHP 5.2.0 :
+		 * 
+		 * 	false doit être retourné pour peupler $php_errormsg
+		 * 	en cas de fatal error, stoppe le script
+		 * 
+		 * 	true doit être retourné pour effectuer des opérations : envoi de mail par exemple
+		 * 	en cas de fatal error, continue le script
+		 */
+		return !(boolean) ini_get('display_errors');
 	}
 	
 	/**
@@ -171,12 +188,13 @@ class Zest_Error_Handler extends Zest_Log_Abstract{
 	 * @return void
 	 */
 	public static function handleException(Exception $e){
-		self::_getInstance()->_handleError(array(
-			'type' => $e->getCode(),
+		self::_getInstance()->_handleError(self::TYPE_EXCEPTION, array(
+			'type' => self::TYPE_EXCEPTION,
+			'code' => $e->getCode(),
 			'message' => $e->getMessage(),
 			'file' => $e->getFile(),
 			'line' => $e->getLine(),
-			'context' => $e->getTraceAsString()
+			'backtrace' => $e->getTraceAsString()
 		));
 	}
 	
