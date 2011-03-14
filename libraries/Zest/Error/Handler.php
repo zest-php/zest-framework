@@ -123,7 +123,13 @@ class Zest_Error_Handler extends Zest_Log_Abstract{
 	 */
 	protected function _handleError(array $error){
 		if($priority = $this->_getPriority($error['type'])){
-			$message = print_r($error, true);
+			$message = array(
+				'ERROR' => print_r($error, true),
+				'SERVER' => print_r($_SERVER, true),
+				'$_GET' => print_r($_GET, true),
+				'$_POST' => print_r($_POST, true),
+				'$_FILES' => print_r($_FILES, true)
+			);
 			$this->_getLogger()->log($message, $priority);
 		}			
 		
