@@ -183,24 +183,12 @@ class Zest_View_Helper_Head extends Zend_View_Helper_Abstract{
 	}
 	
 	/**
-	 * @param string $lang
-	 * @param string $placement
-	 * @return Zest_View_Helper_Head
-	 */
-	public function lang($lang, $placement = Zend_View_Helper_Placeholder_Container_Abstract::SET){
-		$this->view->headMeta($lang, 'language', 'name', array(), $placement);
-		$this->view->headMeta($lang, 'language', 'http-equiv', array(), $placement);
-		return $this;
-	}
-	
-	/**
 	 * @param string $robots
 	 * @param string $placement
 	 * @return Zest_View_Helper_Head
 	 */
 	public function robots($robots, $placement = Zend_View_Helper_Placeholder_Container_Abstract::SET){
 		$this->view->headMeta($robots, 'robots', 'name', array(), $placement);
-		$this->view->headMeta($robots, 'robots', 'http-equiv', array(), $placement);
 		return $this;
 	}
 	
@@ -213,6 +201,38 @@ class Zest_View_Helper_Head extends Zend_View_Helper_Abstract{
 			'rel' => 'canonical',
 			'href' => $href
 		));
+		return $this;
+	}
+	
+	/**
+	 * @param string $locale
+	 * @param string $placement
+	 * @return Zest_View_Helper_Head
+	 */
+	public function lang($locale, $placement = Zend_View_Helper_Placeholder_Container_Abstract::SET){
+		$locale = str_replace('_', '-', $locale);
+		$this->view->headMeta($locale, 'content-language', 'http-equiv', array(), $placement);
+		$this->view->headMeta($locale, 'language', 'name', array(), $placement);
+		return $this;
+	}
+	
+	/**
+	 * @param string $contentType
+	 * @param string $placement
+	 * @return Zest_View_Helper_Head
+	 */
+	public function contentType($contentType, $placement = Zend_View_Helper_Placeholder_Container_Abstract::SET){
+		$this->view->headMeta($contentType, 'content-type', 'http-equiv', array(), $placement);
+		return $this;
+	}
+	
+	/**
+	 * @param string $resourceType
+	 * @param string $placement
+	 * @return Zest_View_Helper_Head
+	 */
+	public function resourceType($resourceType, $placement = Zend_View_Helper_Placeholder_Container_Abstract::SET){
+		$this->view->headMeta($resourceType, 'resource-type', 'name', array(), $placement);
 		return $this;
 	}
 	

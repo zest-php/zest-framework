@@ -18,8 +18,7 @@ class Zest_Controller_Plugin_Head extends Zend_Controller_Plugin_Abstract{
 		$view = Zest_View::getStaticView();
 		
 		// encoding
-		$view->headMeta()->setHttpEquiv('Content-Type', 'text/html; charset='.strtolower($view->getEncoding()));
-		$view->headMeta()->setName('resource-type', 'text');
+		$view->head()->contentType('text/html; charset='.strtolower($view->getEncoding()));
 		
 		$helpers = array('headTitle', 'headMeta', 'headLink', 'headStyle', 'headScript');
 		$head = '';
