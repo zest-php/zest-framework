@@ -45,6 +45,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	/**
 	 * @param array $data
 	 * @param Zest_Db_Object $object
+	 * @param array $options
 	 * @return Zest_Db_Object
 	 */
 	public function create(array $data = array(), Zest_Db_Object $object = null, array $options = array()){
@@ -66,6 +67,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	/**
 	 * @param ineteger|array|Zest_Db_Model_Request $request
 	 * @param Zest_Db_Object $object
+	 * @param array $options
 	 * @return Zest_Db_Object
 	 */
 	public function find($request, Zest_Db_Object $object = null, array $options = array()){
@@ -108,6 +110,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	
 	/**
 	 * @param Zest_Db_Object $object
+	 * @param array $options
 	 * @return boolean
 	 */
 	public function save(Zest_Db_Object $object, array $options = array()){
@@ -118,6 +121,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	
 	/**
 	 * @param Zest_Db_Object $object
+	 * @param array $options
 	 * @return boolean
 	 */
 	public function delete(Zest_Db_Object $object, array $options = array()){
