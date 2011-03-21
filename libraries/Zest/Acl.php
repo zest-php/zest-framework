@@ -12,6 +12,11 @@ class Zest_Acl extends Zend_Acl{
 	protected $_adapter = null;
 	
 	/**
+	 * @var boolean
+	 */
+	protected $_throwExceptions = false;
+	
+	/**
 	 * @return Zest_Acl_Adapter_Abstract
 	 */
 	public function getAdapter(){
@@ -54,7 +59,7 @@ class Zest_Acl extends Zend_Acl{
 			$resource->setOptions($options);
 		}
 		
-		if(!$this->has($resource)){
+		if(!$this->has($resource) || $this->_throwExceptions){
 			parent::addResource($resource, $parent);	
 		}
 		
@@ -71,7 +76,7 @@ class Zest_Acl extends Zend_Acl{
 			$role = new Zest_Acl_Role($role, $this);
 		}
 		
-		if(!$this->_getRoleRegistry()->has($role)){
+		if(!$this->_getRoleRegistry()->has($role) || $this->_throwExceptions){
 			parent::addRole($role, $parents);
 		}
 		
@@ -94,8 +99,8 @@ class Zest_Acl extends Zend_Acl{
 		foreach($resources as $key => $object){
 			if(is_object($object) && !($object instanceof Zend_Acl_Resource_Interface)){
 				if($resource = $this->_getResourceFromObject($object)){
-					$resources[$resource->getResourceId()] = $object;
 					unset($resources[$key]);
+					$resources[$resource->getResourceId()] = $object;
 				}
 				else{
 					throw new Zest_Acl_Exception(sprintf('Aucune ressource attachée à la classe "%s".', get_class($object)));
@@ -113,7 +118,7 @@ class Zest_Acl extends Zend_Acl{
 					throw new Zest_Acl_Exception('Pour utiliser la syntaxe array(resourceId => values) la ressource doit être une instance de Zest_Acl_Resource.');
 				}
 				
-				if(!is_array($values)) $values = (array) $values;
+				if(!is_array($values)) $values = array($values);
 				foreach($values as $value){
 					$value = $this->_getResourceValue($resource, $value);
 					if($privileges){
@@ -167,7 +172,15 @@ class Zest_Acl extends Zend_Acl{
 			$privilege .= $this->_getResourceValue($resource, $value);
 		}
 		
-		return parent::isAllowed($role, $resource, $privilege);
+		try{
+			return parent::isAllowed($role, $resource, $privilege);
+		}
+		catch(Zend_Exception $e){
+			if($this->_throwExceptions){
+				throw $e;
+			}
+			return false;
+		}
 	}
 	
 	/**
