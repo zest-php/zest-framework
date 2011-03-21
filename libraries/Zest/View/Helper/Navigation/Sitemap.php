@@ -25,12 +25,27 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 	/**
 	 * @var string
 	 */
-	protected $_styleSheet = null;
+	protected $_stylesheet = null;
 
 	/**
 	 * @var boolean
 	 */
 	protected $_formatOutput = true;
+	
+	/**
+	 * @var boolean
+	 */
+	protected $_recursiveAllContainerVisible = true;
+	
+	/**
+	 * @var boolean
+	 */
+	protected $_uniqueHref = true;
+	
+	/**
+	 * @var array
+	 */
+	protected $_uniqueHrefTest = array();
 	
 	/**
 	 * @var string
@@ -72,11 +87,23 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 	}
 	
 	/**
-	 * @param string $styleSheet
+	 * @param string $stylesheet
 	 * @return Zest_View_Helper_Navigation_Sitemap
 	 */
-	public function setStyleSheet($styleSheet){
-		$this->_styleSheet = $styleSheet;
+	public function setStylesheet($stylesheet){
+		$this->_stylesheet = $stylesheet;
+		return $this;
+	}
+	
+	/**
+	 * @param Zend_Navigation_Container $container
+	 * @return Zest_View_Helper_Navigation_Sitemap
+	 */
+	public function setContainer(Zend_Navigation_Container $container = null){
+		if($this->_recursiveAllContainerVisible && $container){
+			$this->_recursiveAllContainerVisible($container);
+		}
+		parent::setContainer($container);
 		return $this;
 	}
 	
@@ -84,10 +111,15 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 	 * @return Zend_Navigation_Container
 	 */
 	public function getContainer(){
-		if(!$this->_container){
-			$this->_container = new Zend_Navigation();
-			foreach($this->_data as $options){
-				$this->_container->addPage($options);
+		if(is_null($this->_container)){
+			$container = parent::getContainer();
+			if($this->_data){
+				foreach($this->_data as $options){
+					$container->addPage($options);
+				}
+			}
+			if($this->_recursiveAllContainerVisible){
+				$this->_recursiveAllContainerVisible($container);
 			}
 		}
 		return $this->_container;
@@ -95,9 +127,31 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 	
 	/**
 	 * @param Zend_Navigation_Container $container
+	 * @return void
+	 */
+	protected function _recursiveAllContainerVisible(Zend_Navigation_Container $container){
+		foreach($container as $page){
+			$page->setVisible(true);
+			$this->_recursiveAllContainerVisible($page);
+		}
+	}
+	
+	/**
+	 * @param Zend_Navigation_Container $container
+	 * @return DOMDocument
+	 */
+	public function getDomSitemap(Zend_Navigation_Container $container = null){
+		$this->_uniqueHrefTest = array();
+		return parent::getDomSitemap($container);
+	}
+	
+	/**
+	 * @param Zend_Navigation_Container $container
 	 * @return DOMDocument
 	 */
 	public function getDomSitemapindex(Zend_Navigation_Container $container = null){
+		$this->_uniqueHrefTest = array();
+		
 		if(is_null($container)){
 			$container = $this->getContainer();
 		}
@@ -192,28 +246,50 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 			$dom = $this->getDomSitemap($container);
 		}
 		
-		$xml = $this->getUseXmlDeclaration() ? $dom->saveXML() : $dom->saveXML($dom->documentElement);
-		$xml = rtrim($xml, PHP_EOL);
-		
-		if($this->_styleSheet){
-			$replace = '<?xml version="1.0" encoding="UTF-8"?>';
-			$xsl = '<?xml-stylesheet type="text/xsl" href="'.$this->_styleSheet.'"?>';
-			$xml = str_replace($replace, $replace.PHP_EOL.$xsl, $xml);
+		if($this->_stylesheet){
+			$stylesheet = new DOMProcessingInstruction('xml-stylesheet', 'href="'.$this->_stylesheet.'" type="text/xsl"');
+			if($this->_useSitemapindex){
+				$sitemapindex = $dom->getElementsByTagName('sitemapindex')->item(0);
+				$sitemapindex->parentNode->insertBefore($stylesheet, $sitemapindex);
+			}
+			else{
+				$urlset = $dom->getElementsByTagName('urlset')->item(0);
+				$urlset->parentNode->insertBefore($stylesheet, $urlset);
+			}
 		}
+		
+		$xml = $this->getUseXmlDeclaration() ? $dom->saveXML() : $dom->saveXML($dom->documentElement);
 		
 		return $xml;
 	}
 	
 	/**
+	 * @param Zend_Navigation_Page $page
+	 * @return string
+	 */
+	public function url(Zend_Navigation_Page $page){
+		$href = parent::url($page);
+		if($this->_uniqueHref && in_array($href, $this->_uniqueHrefTest)){
+			return;
+		}
+		$this->_uniqueHrefTest[] = $href;
+		return $href;
+	}
+	
+	/**
 	 * @return void
 	 */
-	public function send(){
+	public function send(Zend_Controller_Response_Abstract $response){
 		if(headers_sent()){
 			throw new Zest_Sitemap_Exception('Impossible d\'envoyer le sitemap car les headers ont déjà été envoyés.');
 		}
 		
-		Zest_Controller_Front::getInstance()->getResponse()->setHeader('Content-Type', 'text/xml; charset=UTF-8');
-		echo $this->render();
+		$response
+			->setHeader('content-type', 'text/xml; charset=utf-8')
+			->setBody($this->render())
+			->sendResponse();
+			
+		exit;
 	}
 	
 }
