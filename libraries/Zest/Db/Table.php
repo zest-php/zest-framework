@@ -37,7 +37,11 @@ class Zest_Db_Table extends Zend_Db_Table{
 	 */
 	public static function getInstance($className){
 		if(!isset(self::$_instances[$className])){
-			self::$_instances[$className] = new $className();
+			$table = new $className();
+			if(!$table instanceof Zest_Db_Table){
+				throw new Zest_Db_Exception('La table doit hériter de Zest_Db_Table.');
+			}
+			self::$_instances[$className] = $table;
 		}
 		return self::$_instances[$className];
 	}
@@ -91,7 +95,7 @@ class Zest_Db_Table extends Zend_Db_Table{
 	 */
 	public function getMetadataCache(){
 		if(!$this->_metadataCache && $this->_metadataCacheDir){
-			$this->_metadataCache = self::_getMetadataCache($this->_metadataCacheDir);
+			$this->_metadataCache = self::_createZendCache($this->_metadataCacheDir);
 		}
 		return $this->_metadataCache;
 	}
@@ -101,7 +105,7 @@ class Zest_Db_Table extends Zend_Db_Table{
 	 */
 	public static function getDefaultMetadataCache(){
 		if(!self::$_defaultMetadataCache && self::$_defaultMetadataCacheDir){
-			self::$_defaultMetadataCache = self::_getMetadataCache(self::$_defaultMetadataCacheDir);
+			self::$_defaultMetadataCache = self::_createZendCache(self::$_defaultMetadataCacheDir);
 		}
 		return self::$_defaultMetadataCache;
 	}
@@ -124,10 +128,19 @@ class Zest_Db_Table extends Zend_Db_Table{
 	}
 	
 	/**
+	 * @param string|Zend_Cache_Core $metadataCache
+	 * @return Zest_Db_Table
+	 */
+	public function setMetadataCache($metadataCache = null){
+		$this->_setMetadataCache($metadataCache);
+		return $this;
+	}
+	
+	/**
 	 * @param string $dir
 	 * @return Zend_Cache_Core
 	 */
-	protected static function _getMetadataCache($dir){
+	protected static function _createZendCache($dir){
 		$frontend = array('automatic_serialization' => true);
 		$backend = array('cache_dir' => $dir);
 		return Zend_Cache::factory('Core', 'File', $frontend, $backend);

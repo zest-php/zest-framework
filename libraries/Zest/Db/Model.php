@@ -53,11 +53,11 @@ class Zest_Db_Model{
 	 */
 	public static function getInstance($className, $arg = null){
 		if(!isset(self::$_instances[$className])){
-			$mapper = new $className($arg);
-			if(!$mapper instanceof Zest_Db_Model){
+			$model = new $className($arg);
+			if(!$model instanceof Zest_Db_Model){
 				throw new Zest_Db_Exception('Le model doit hériter de Zest_Db_Model.');
 			}
-			self::$_instances[$className] = $mapper;
+			self::$_instances[$className] = $model;
 		}
 		return self::$_instances[$className];
 	}
@@ -70,10 +70,10 @@ class Zest_Db_Model{
 		if(is_string($dbTable)){
 			$dbTable = Zest_Db_Table::getInstance($dbTable);
 		}
-		$this->_dbTable = $dbTable;
-		if(!$this->_dbTable instanceof Zest_Db_Table){
+		if(!$dbTable instanceof Zest_Db_Table){
 			throw new Zest_Db_Exception('La table doit hériter de Zest_Db_Table.');
 		}
+		$this->_dbTable = $dbTable;
 		return $this;
 	}
 	
@@ -338,15 +338,19 @@ class Zest_Db_Model{
 	 * @return boolean
 	 */
 	public function save(Zest_Db_Model_Request $request){
-		$save = $this->_getAdapter()->save($request);
-		
-		if($save && $request->object instanceof Zest_Db_Object){
-			$refreshclean = $request->getOption('refreshclean');
-			if(is_null($refreshclean) || $refreshclean){
-				$request->object->setDataToClean();
+		if($request->object instanceof Zest_Db_Object){
+			if(!$request->object->toArray()){
+				throw new Zest_Db_Exception('Impossible de faire une requête à partir d\'un objet vide.');
+			}
+			
+			$save = $this->_getAdapter()->save($request);
+			if($save){
+				$datatoclean = $request->getOption('datatoclean');
+				if(is_null($datatoclean) || $datatoclean){
+					$request->object->setDataToClean();
+				}
 			}
 		}
-		
 		return $save;
 	}
 	

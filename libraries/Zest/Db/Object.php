@@ -144,10 +144,10 @@ class Zest_Db_Object extends Zest_Data{
 		if(is_string($mapper)){
 			$mapper = Zest_Db_Object_Mapper::getInstance($mapper, $this);
 		}
-		$this->_mapper = $mapper;
-		if(!$this->_mapper instanceof Zest_Db_Object_Mapper){
+		if(!$mapper instanceof Zest_Db_Object_Mapper){
 			throw new Zest_Db_Exception('Le mapper doit hériter de Zest_Db_Object_Mapper.');
 		}
+		$this->_mapper = $mapper;
 		return $this;
 	}
 	
@@ -215,6 +215,9 @@ class Zest_Db_Object extends Zest_Data{
 	 * @return Zest_Db_Object
 	 */
 	public function save(array $options = array()){
+		if(!$this->_data){
+			$this->create();
+		}
 		$this->getMapper()->save($this, $options);
 		return $this;
 	}
