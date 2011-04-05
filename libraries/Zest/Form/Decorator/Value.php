@@ -32,6 +32,10 @@ class Zest_Form_Decorator_Value extends Zend_Form_Decorator_Abstract{
 			$value = implode($this->getSeparator(), $value);
 		}
 		
+		if(!$value){
+			$value = '&nbsp;';
+		}
+		
 		switch ($placement) {
 			case self::APPEND:
 				return $content . $value;
