@@ -232,14 +232,19 @@ class Zest_File extends Zest_File_Abstract{
 	
 	/**
 	 * @param array $options
+	 * @param Zend_Controller_Request_Http $request
 	 * @return void
 	 */
-	public function send(array $options = array()){
+	public function send(array $options = array(), Zend_Controller_Request_Http $request = null){
 		if(!$this->fileExists()){
 			throw new Zest_File_Exception(sprintf('Le fichier "%s" n\'existe pas.', $this->getBasename()));
 		}
 		if(!$this->isReadable()){
 			throw new Zest_File_Exception(sprintf('Le fichier "%s" ne peut pas être lu.', $this->getBasename()));
+		}
+		
+		if(is_null($request)){
+			$request = Zest_Controller_Front::getInstance()->getRequest();
 		}
 		
 		$options = array_change_key_case($options, CASE_LOWER);
@@ -259,7 +264,10 @@ class Zest_File extends Zest_File_Abstract{
 		if(!$file){
 			$file = $this;
 		}
-			
+		
+		session_cache_limiter('must-revalidate');
+		header('content-length: '.$file->getSize());
+		
 		if(!isset($options['header']) || $options['header']){
 			// filename
 			$filename = $this->getBasename();
@@ -286,11 +294,22 @@ class Zest_File extends Zest_File_Abstract{
 			header('cache-control: must-revalidate, post-check=0, pre-check=0');
 			header('pragma: public');
 			header('expires: 0');
+		
+			// status 304
+			if(!isset($options['304']) || $options['304']){
+				$mtime = $this->getMTime();
+				header('last-modified: ' . date('r', $mtime));
+				$if_modified_since = $request->getHeader('if_modified_since');
+				if($if_modified_since){
+					$if_modified_since = strtotime($if_modified_since);
+					if(!($if_modified_since < $mtime)){
+						header('HTTP/1.0 304 Not Modified');
+						exit;
+					}
+				}
+			}
 		}
 		
-		session_cache_limiter('must-revalidate');
-		
-		header('content-length: '.$file->getSize());
 		if($stream){
 			$file->_streamContents();
 		}
