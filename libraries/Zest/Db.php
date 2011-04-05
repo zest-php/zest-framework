@@ -28,6 +28,9 @@ class Zest_Db extends Zend_Db{
 	 */
 	public static function setDbConfig($name, array $config){
 		$name = strtolower($name);
+		if(isset(self::$_dbConfigs[$name]) && self::$_dbConfigs[$name] instanceof Zend_Db_Adapter_Abstract){
+			throw new Zest_Db_Exception(sprintf('Impossible de modifier la configuration de l\'adaptateur "%s" car il est déjà chargé.', $name));
+		}
 		self::$_dbConfigs[$name] = $config;
 	}
 	

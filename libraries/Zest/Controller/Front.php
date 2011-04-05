@@ -22,14 +22,6 @@ class Zest_Controller_Front extends Zend_Controller_Front{
 	}
 	
 	/**
-	 * @param Zest_Controller_Front $instance
-	 * @return void
-	 */
-	public static function setInstance($instance){
-		self::$_instance = $instance;
-	}
-	
-	/**
 	 * @param string $module
 	 * @return string
 	 */
