@@ -155,7 +155,7 @@ class Zest_Event{
 	 * @return boolean
 	 */
 	public static function hasEventListener($type, $callback = null){
-		if(isset(self::$_events[$type])){
+		if(isset(self::$_events[$type]) && count(self::$_events[$type])){
 			if(is_null($callback)){
 				return true;
 			}
