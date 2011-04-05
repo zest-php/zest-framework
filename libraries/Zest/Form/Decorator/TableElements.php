@@ -28,15 +28,17 @@ class Zest_Form_Decorator_TableElements extends Zest_Form_Decorator_Abstract{
 			}
 		}
 		
-		// on génère le rendu à partir du décorateur Zend_Form_Decorator_FormElements
-		$formElements = new Zend_Form_Decorator_FormElements();
-		$formElements->setElement($form);
-		$content = $formElements->render($content);
+		if($form->getElements()){
+			// on génère le rendu à partir du décorateur Zend_Form_Decorator_FormElements
+			$formElements = new Zend_Form_Decorator_FormElements();
+			$formElements->setElement($form);
+			$content = $formElements->render($content);
 		
-		// on génère le rendu à partir du décorateur Zend_Form_Decorator_HtmlTag
-		$htmlTag = new Zend_Form_Decorator_HtmlTag(array('tag' => 'table', 'cellpadding' => 0, 'cellspacing' => 0));
-		$htmlTag->setElement($form);
-		$content = $htmlTag->render($content);
+			// on génère le rendu à partir du décorateur Zend_Form_Decorator_HtmlTag
+			$htmlTag = new Zend_Form_Decorator_HtmlTag(array('tag' => 'table', 'cellpadding' => 0, 'cellspacing' => 0));
+			$htmlTag->setElement($form);
+			$content = $htmlTag->render($content);
+		}
 		
 		// on génère le rendu des éléments cachés
 		foreach($elements as $element){

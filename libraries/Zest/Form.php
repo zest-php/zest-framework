@@ -78,7 +78,7 @@ class Zest_Form extends Zend_Form{
 		parent::addDisplayGroup($elements, $name, $options);
 		
 		// décorateurs par défaut
-		if(!$disableLoadDefaultDecorators){
+		if(!$disableLoadDefaultDecorators && !$this->getDisplayGroup($name)->getDecorators()){
 			$this->$name	->addDecorator('tableElements')
 							->addDecorator('fieldset')
 							->addDecorator('trGroup');
@@ -112,8 +112,8 @@ class Zest_Form extends Zend_Form{
 	 * @return Zest_Form
 	 */
 	public function addSubForm(Zend_Form $form, $name, $order = null){
-		$this->_autoRenameFileElements($form);
 		parent::addSubForm($form, $name, $order);
+		$this->_autoRenameFileElements($form);
 		
 		// décorateurs par défaut
 		if(!$form->loadDefaultDecoratorsIsDisabled()){
@@ -154,14 +154,18 @@ class Zest_Form extends Zend_Form{
 	 * @return void
 	 */
 	protected function _autoRenameFileElements(Zend_Form $form){
+		foreach($form->getSubForms() as $subForm){
+			$this->_autoRenameFileElements($subForm);
+		}
+		
 		// dans les subform, les éléments file ne prennent pas en compte la valeur belongsTo
 		foreach($form->getElements() as $element){
 			if(!$element instanceof Zend_Form_Element_File) continue;
 			
 			$suffix = 0;
-			$newName = $element->getName();
+			$newName = $initName = preg_replace('/_[0-9]+$/', '', $element->getName());
 			while($this->getElement($newName, true)){
-				$newName = $element->getName().'_'.++$suffix;
+				$newName = $initName.'_'.++$suffix;
 			}
 			
 			if($suffix){
@@ -175,10 +179,6 @@ class Zest_Form extends Zend_Form{
 				}
 				$form->addElement($element);
 			}
-		}
-		
-		foreach($form->getSubForms() as $subForm){
-			$this->_autoRenameFileElements($subForm);
 		}
 	}
 	
