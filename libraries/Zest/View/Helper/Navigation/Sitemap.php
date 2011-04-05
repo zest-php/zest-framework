@@ -35,7 +35,7 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 	/**
 	 * @var boolean
 	 */
-	protected $_recursiveAllContainerVisible = true;
+	protected $_recursiveAllContainerVisible = false;
 	
 	/**
 	 * @var boolean
