@@ -13,12 +13,13 @@ class Zest_File_Helper_Xml extends Zest_File_Helper_Abstract{
 	protected $_xml = null;
 	
 	/**
-	 * @param Zest_File $file
-	 * @return void
+	 * @return SimpleXMLElement
 	 */
-	public function __construct(Zest_File $file){
-		parent::__construct($file);
-		$this->_xml = new SimpleXMLElement($file->getContents());
+	protected function _getSimpleXMLElement(){
+		if(is_null($this->_xml)){
+			$this->_xml = new SimpleXMLElement($this->_file->getContents());
+		}
+		return $this->_xml;
 	}
 	
 	/**
@@ -27,7 +28,7 @@ class Zest_File_Helper_Xml extends Zest_File_Helper_Abstract{
 	 * @return mixed
 	 */
 	public function __call($method, $args){
-		return $this->_call($this->_xml, $method, $args);
+		return $this->_call($this->_getSimpleXMLElement(), $method, $args);
 	}
 	
 	/**
@@ -35,7 +36,7 @@ class Zest_File_Helper_Xml extends Zest_File_Helper_Abstract{
 	 * @return SimpleXMLElement
 	 */
 	public function __get($name){
-		return $this->_xml->$name;
+		return $this->_getSimpleXMLElement()->$name;
 	}
 	
 //	/**
@@ -44,7 +45,7 @@ class Zest_File_Helper_Xml extends Zest_File_Helper_Abstract{
 //	 * @return mixed
 //	 */
 //	public function __set($name, $value){
-//		$this->_xml->$name = $value;
+//		$this->_getSimpleXMLElement()->$name = $value;
 //	}
 	
 }

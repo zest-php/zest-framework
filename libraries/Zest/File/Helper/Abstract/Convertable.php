@@ -31,6 +31,12 @@ abstract class Zest_File_Helper_Abstract_Convertable extends Zest_File_Helper_Ab
 	 * @return string
 	 */
 	public static function getDefaultCacheDir(){
+		if(is_null(self::$_defaultCacheDir)){
+			self::$_defaultCacheDir = rtrim(sys_get_temp_dir(), '/\\').'/zest-file-convertable-cache';
+			if(!file_exists(self::$_defaultCacheDir)){
+				mkdir(self::$_defaultCacheDir);
+			}
+		}
 		return self::$_defaultCacheDir;
 	}
 	
@@ -90,19 +96,16 @@ abstract class Zest_File_Helper_Abstract_Convertable extends Zest_File_Helper_Ab
 			$extension = $options['extension'];
 		}
 		
-		if($cachable){
-			$cache_id = hash('md5', $this->_file->getPathname().$this->_file->getMTime().serialize($options));
-			$file = new Zest_File($cacheDir.'/'.$this->_file->getBasename('.'.$this->_file->getExtension()).'_'.$cache_id.'.'.$extension);
+		$cache_id = hash('md5', $this->_file->getPathname().$this->_file->getMTime().serialize($options));
+		$file = new Zest_File($cacheDir.'/'.$this->_file->getBasename('.'.$this->_file->getExtension()).'_'.$cache_id.'.'.$extension);
 		
-			// nettoyage du cache
-			Zest_Dir::factory($cacheDir)->cleanGarbage(self::$_gcLifetime, self::$_gcFreq);
-		}
-		else{
-			// s'il n'y a pas de cache, utilisation du dossier temporaire
-			$file = new Zest_File(sys_get_temp_dir().'/'.$this->_file->getBasename($this->_file->getExtension()).$extension);
-		}
-		
+		// nettoyage du cache
+		Zest_Dir::factory($cacheDir)->cleanGarbage(self::$_gcLifetime, self::$_gcFreq);
+			
 		// conversion
+		if($file->isReadable() && !$file->getSize()){
+			$file->unlink();
+		}
 		if(!$cachable || !$file->isReadable()){
 			if($options && $canBeConverted){
 				$this->convertTo($file, $options);

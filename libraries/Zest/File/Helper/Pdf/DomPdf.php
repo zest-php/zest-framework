@@ -41,12 +41,9 @@ class Zest_File_Helper_Pdf_DomPdf extends Zest_File_Helper_Pdf_Abstract{
 	protected $_orientation = array('portrait', 'landscape');
 	
 	/**
-	 * @param Zest_File $file
 	 * @return void
 	 */
-	public function __construct(Zest_File $file){
-		parent::__construct($file);
-		
+	protected function _autoload(){
 		$hasDomPdfAutoload = false;
 		$autoloader = Zend_Loader_Autoloader::getInstance();
 		foreach($autoloader->getAutoloaders() as $loader){
@@ -67,6 +64,8 @@ class Zest_File_Helper_Pdf_DomPdf extends Zest_File_Helper_Pdf_Abstract{
 	 * @return Zest_File_Helper_Pdf_DomPdf
 	 */
 	public function putRender($name, array $vars = array(), $size = 'a4', $orientation = 'portrait'){
+		$this->_autoload();
+		
 		if(!in_array($size, $this->_paper)){
 			throw new Zest_File_Exception(sprintf('Le format "%s" n\'existe pas.', $size));
 		}

@@ -18,26 +18,25 @@ class Zest_File_Helper_Zip extends Zest_File_Helper_Abstract{
 	protected $_opened = false;
 	
 	/**
-	 * @param Zest_File $file
-	 * @return void
+	 * @return ZipArchive
 	 */
-	public function __construct(Zest_File $file){
-		parent::__construct($file);
-		
-		if(!extension_loaded('zip')){
-			throw new Zest_File_Exception('L\'extension PHP "zip" n\'est pas chargée.');
+	protected function _getZipArchive(){
+		if(is_null($this->_archive)){
+			if(!extension_loaded('zip')){
+				throw new Zest_File_Exception('L\'extension PHP "zip" n\'est pas chargée.');
+			}
+			$this->_archive = new ZipArchive();
 		}
-		
-		$this->_archive = new ZipArchive();
+		return $this->_archive;
 	}
 	
 	/**
 	 * @param integer $mode (ZipArchive::OVERWRITE, ZipArchive::CREATE, ZipArchive::EXCL, ZipArchive::CHECKCONS)
 	 * @return Zest_File_Helper_Zip
 	 */
-	public function open($mode){
+	public function open($mode = ZIPARCHIVE::CHECKCONS){
 		if($this->_opened !== true){
-			$this->_opened = $this->_archive->open($this->_file->getPathname(), $mode);
+			$this->_opened = $this->_getZipArchive()->open($this->_file->getPathname(), $mode);
 		}
 		return $this;
 	}
@@ -47,7 +46,7 @@ class Zest_File_Helper_Zip extends Zest_File_Helper_Abstract{
 	 */
 	public function close(){
 		if($this->_opened === true){
-			if($this->_archive->close()){
+			if($this->_getZipArchive()->close()){
 				$this->_opened = false;
 			}
 		}
@@ -61,7 +60,7 @@ class Zest_File_Helper_Zip extends Zest_File_Helper_Abstract{
 	 */
 	public function __call($method, $args){
 		$this->open(ZipArchive::CREATE);
-		return $this->_call($this->_archive, $method, $args);
+		return $this->_call($this->_getZipArchive(), $method, $args);
 	}
 	
 }
