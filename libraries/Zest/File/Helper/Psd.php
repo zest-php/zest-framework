@@ -23,7 +23,7 @@ class Zest_File_Helper_Psd extends Zest_File_Helper_Abstract_Convertable{
 	 * @param array $options
 	 * @return void
 	 */
-	public function convert(){
+	public function convert(array $options){
 		throw new Zest_File_Exception('Impossible d\'écraser le fichier courant : utiliser la méthode "convertTo\'.');
 	}
 	
@@ -58,7 +58,7 @@ class Zest_File_Helper_Psd extends Zest_File_Helper_Abstract_Convertable{
 		}
 		
 		// quality
-		$quality = $extension == 'png' ? null : 100;
+		$quality = $extension == 'png' ? null : 90;
 		if($extension == 'jpeg' && isset($options['quality'])){
 			$quality = $options['quality'];
 		}

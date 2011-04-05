@@ -36,14 +36,6 @@ class Zest_File_Helper_Pdf_Html2Pdf extends Zest_File_Helper_Pdf_Abstract{
 	);
 	
 	/**
-	 * @param Zest_File $file
-	 * @return void
-	 */
-	public function __construct(Zest_File $file){
-		parent::__construct($file);
-	}
-	
-	/**
 	 * @param string $name
 	 * @param array $vars
 	 * @param string $orientation

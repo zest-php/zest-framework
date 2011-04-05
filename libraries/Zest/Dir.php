@@ -7,11 +7,6 @@
 class Zest_Dir extends Zest_File_Abstract implements IteratorAggregate{
 	
 	/**
-	 * @var integer
-	 */
-	const SECURITY_COUNT_DIRECTORY_SEPARATOR = 2;
-	
-	/**
 	 * @param string $pathname
 	 * @return Zest_Dir
 	 */
@@ -47,10 +42,6 @@ class Zest_Dir extends Zest_File_Abstract implements IteratorAggregate{
 		$array = preg_split('/\/|\\\/', $this->getPathname());
 		
 		$currentPath = '';
-		for($i=0; $i<self::SECURITY_COUNT_DIRECTORY_SEPARATOR; $i++){
-			$currentPath .= array_shift($array).'/';
-		}
-		
 		do{
 			$currentPath .= array_shift($array).'/';
 			$return = $dir->setPathname($currentPath)->mkdir();
@@ -96,22 +87,8 @@ class Zest_Dir extends Zest_File_Abstract implements IteratorAggregate{
 	 */
 	public function setPathname($pathname){
 		parent::setPathname($pathname);
-		
 		$this->_pathname = rtrim($this->_pathname, '/');
-		
-		// sécurité
-		if($this->_pathname && substr_count($this->_pathname, '/') < self::SECURITY_COUNT_DIRECTORY_SEPARATOR){
-			$this->_throwSecurityException();
-		}
-		
 		return $this;
-	}
-	
-	/**
-	 * @return void
-	 */
-	protected function _throwSecurityException(){
-		throw new Zest_File_Exception(sprintf('Pour des raisons de sécurité, le chemin "%s" doit comporté au moins 2 caractères "%s"', $this->_pathname, '/'));
 	}
 	
 	/**

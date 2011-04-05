@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * documentation : http://ffmpeg.org/ffmpeg-doc.html#SEC8
+ * 
  * @category Zest
  * @package Zest_File
  * @subpackage Helper
@@ -18,20 +20,16 @@ class Zest_File_Helper_Abstract_FFmpeg extends Zest_File_Helper_Abstract_Convert
 	protected $_command = null;
 	
 	/**
-	 * documentation : http://ffmpeg.org/ffmpeg-doc.html#SEC8
-	 * 
-	 * @param Zest_File $file
-	 * @return void
+	 * @return ffmpeg_movie
 	 */
-	public function __construct(Zest_File $file){
-		parent::__construct($file);
-		
-//		if(!extension_loaded('ffmpeg')){
-//			throw new Zest_File_Exception('L\'extension PHP "ffmpeg" n\'est pas chargée.');
-//		}
-		
-		if(class_exists('ffmpeg_movie', false)){
-			$this->_ffmpeg = new ffmpeg_movie($this->_file->getPathname());
+	protected function _getFfmpegMovie(){
+		if(is_null($this->_ffmpeg)){
+//			if(!extension_loaded('ffmpeg')){
+//				throw new Zest_File_Exception('L\'extension PHP "ffmpeg" n\'est pas chargée.');
+//			}
+			if(class_exists('ffmpeg_movie', false)){
+				$this->_ffmpeg = new ffmpeg_movie($this->_file->getPathname());
+			}
 		}
 	}
 	
@@ -141,7 +139,7 @@ class Zest_File_Helper_Abstract_FFmpeg extends Zest_File_Helper_Abstract_Convert
 	 * @return mixed
 	 */
 	public function __call($method, $args){
-		return $this->_call($this->_ffmpeg, $method, $args);	
+		return $this->_call($this->_getFfmpegMovie(), $method, $args);	
 	}
 	
 	/**
@@ -190,6 +188,9 @@ class Zest_File_Helper_Abstract_FFmpeg extends Zest_File_Helper_Abstract_Convert
 		foreach($options as $position => $option){
 			if(in_array($position, $positions)){
 				$this->_setCommand($type.$position, $option);
+			}
+			else{
+				throw new Zest_File_Exception(sprintf('Les clefs disponibles pour la commande "%s" sont "top", "right", "bottom" et "left".', $type));
 			}
 		}
 		

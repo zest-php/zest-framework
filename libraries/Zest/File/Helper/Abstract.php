@@ -16,7 +16,7 @@ abstract class Zest_File_Helper_Abstract{
 	 * @param Zest_File $file
 	 * @return void
 	 */
-	public function __construct(Zest_File $file){
+	public final function __construct(Zest_File $file){
 		$this->_file = $file;
 	}
 	
