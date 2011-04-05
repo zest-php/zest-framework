@@ -63,6 +63,7 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 	
 	/**
 	 * @param string $key
+	 * @param boolean $throwExceptions
 	 * @return array|string
 	 */
 	public function get($key = null, $throwExceptions = false){
