@@ -23,11 +23,11 @@ class Zest_Application_Resource_Config extends Zend_Application_Resource_Resourc
 		$options = Zest_Config::get();
 		
 		// attributions des options à l'application et au bootstrap
-//		$options = $application->mergeOptions($application->getOptions(), $options);
+		$options = $application->mergeOptions($application->getOptions(), $options);
 		$application->setOptions($options);
 		
 		if(!$this->_loadConfigs){
-			$this->getBootstrap()->setOptions($options);
+			$this->getBootstrap()->setOptions(array_diff_key($options, array_flip(array('module'))));
 		}
 		
 		return $config;

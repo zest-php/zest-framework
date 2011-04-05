@@ -18,26 +18,11 @@ class Zest_Application extends Zend_Application{
 	public function __construct($environment, $options = null){	
 		parent::__construct($environment);
 		
-		// initialisations propres au framework Zest
-		
-			// autoloadernamespaces
-			$this->setAutoloaderNamespaces(array('Zest'));
-			
-			// frontcontroller.actionhelperpaths
-			Zend_Controller_Action_HelperBroker::addPrefix('Zest_Controller_Action_Helper');
-			
-			// pluginpaths
-			$this->getBootstrap()->getPluginLoader()->addPrefixPath('Zest_Application_Resource', 'Zest/Application/Resource');
-		
-		// même container pour tous les boostraps (!= new Zend_Registry)
-		$container = Zend_Registry::getInstance();
-		$this->getBootstrap()->setContainer($container);
-		
-		// environnement
-		$container->environment = $this->getEnvironment();
-			
-		if(!is_null($options)){
-			// options
+		// options
+		if(is_null($options)){
+			$options = array();
+		}
+		else{
 			if(is_string($options)){
 				$options = array('config' => $options);
 			}
@@ -47,16 +32,35 @@ class Zest_Application extends Zend_Application{
 			else if(!is_array($options)){
 				throw new Zest_Application_Exception('Le paramètre "options" doit être une chaîne de caractères, un objet de configuration ou un tableau.');
 			}
-			$optionsDiff = array_diff_key($options, array_flip(array('config')));
-			if($optionsDiff){
-				$this->setOptions($optionsDiff);
+		}
+		
+		// configuration propre au framework Zest
+		$options = $this->mergeOptions($options, array(
+			'autoloadernamespaces' => array('Zest'),
+			'resources' => array(
+				'frontcontroller' => array(
+					'actionhelperpaths' => array('Zest_Controller_Action_Helper' => 'Zest/Controller/Action/Helper')
+				)
+			),
+			'pluginpaths' => array('Zest_Application_Resource' => 'Zest/Application/Resource')
+		));
+		
+		$this->setOptions(array_diff_key($options, array_flip(array('config'))));
+		
+		// même container pour tous les boostraps (!= new Zend_Registry)
+		$container = Zend_Registry::getInstance();
+		$this->getBootstrap()->setContainer($container);
+		
+		// environnement
+		$container->environment = $this->getEnvironment();
+		
+		if(isset($options['config'])){
+			if(is_string($options['config'])){
+				$options['config'] = array('pathname' => $options['config']);
 			}
-			
-			if(isset($options['config'])){
-				$this->getBootstrap()
-					->registerPluginResource('config', $options['config'])
-					->bootstrap('config');
-			}
+			$this->getBootstrap()
+				->registerPluginResource('config', $options['config'])
+				->bootstrap('config');
 		}
 	}
 	
