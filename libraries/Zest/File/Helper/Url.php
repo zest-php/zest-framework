@@ -111,7 +111,7 @@ class Zest_File_Helper_Url extends Zest_File_Helper_Abstract{
 				if($valid){
 					if($this->_file->isReadable()){
 						unset($options['pathname']);
-						$this->_file->send($options);
+						$this->_file->send($options, $request);
 					}
 				}
 			}
