@@ -27,22 +27,18 @@ class Zest_Captcha_Image extends Zend_Captcha_Image{
 	protected static $_defaultImgUrl = null;
 	
 	/**
+	 * @var callback
+	 */
+	protected static $_generateWordHook = null;
+	
+	/**
 	 * @param array $options
 	 * @return void
 	 */
 	public function __construct(array $options = array()){
 		//parametres par defaut
-		$default = array(
-//			'wordlen' => 7,				// default : 8
-			'font' => 'arial',			// default : undefined
-//			'lineNoiseLevel' => 0,		// default : 5
-//			'dotNoiseLevel' => 0,		// default : 100
-//			'width' => 100,				// default : 200 / WG : 100
-//			'height' => 25,				// default : 50 / WG : 25
-//			'fontSize' => 10			// default : 24
-		);
-				
-		$options = array_merge($default, $options);		
+		$options = array_merge(array('font' => 'arial'), $options);
+		
 		parent::__construct($options);
 	}
 
@@ -60,6 +56,14 @@ class Zest_Captcha_Image extends Zend_Captcha_Image{
 	 */
 	public static function setDefaultImgUrl($imgUrl){
 		self::$_defaultImgUrl = rtrim($imgUrl, '/\\').'/';
+	}
+
+	/**
+	 * @param callback $callback
+	 * @return void
+	 */
+	public static function setGeneratePasswordHook($callback){
+		self::$_generateWordHook = $callback;
 	}
 
 	/**
@@ -102,20 +106,14 @@ class Zest_Captcha_Image extends Zend_Captcha_Image{
 		return $this;
 	}
 	
-//	/**
-//	 * @return string
-//	 */
-//	protected function _generateWord(){
-//		return parent::_generateWord();
-//	}
-	
 	/**
-	 * @return int
+	 * @return string
 	 */
-	protected function _randomSize(){
-		$propW = $this->getWidth() / 200;
-		$propH = $this->getHeight() / 50;
-		return parent::_randomSize() * min($propW, $propH);
+	protected function _generateWord(){
+		if(self::$_generateWordHook){
+			return (string) call_user_func(self::$_generateWordHook, $this);
+		}
+		return parent::_generateWord();
 	}
 	
 }
