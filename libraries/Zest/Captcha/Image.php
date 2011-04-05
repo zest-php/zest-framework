@@ -110,7 +110,7 @@ class Zest_Captcha_Image extends Zend_Captcha_Image{
 	 * @return string
 	 */
 	public function generate(){
-		// désactivation du plugin de cache s'il est utilisé
+		// dÃ©sactivation du plugin de cache s'il est utilisÃ©
 		$frontcontroller = Zest_Controller_Front::getInstance();
 		if($frontcontroller->hasPlugin('Zest_Controller_Plugin_Cache')){
 			$frontcontroller->unregisterPlugin('Zest_Controller_Plugin_Cache');
