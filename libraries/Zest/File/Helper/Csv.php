@@ -148,9 +148,9 @@ class Zest_File_Helper_Csv extends Zest_File_Helper_Abstract{
 		}
 
 		$header = $this->getHeader();
+		$contents = $this->_file->getContents();
 		
-		if($append){
-			$contents = $this->_file->getContents();
+		if($append && $contents){
 			if(urlencode(substr($contents, -1)) != '%0A'){
 				$this->_file->appendContents(PHP_EOL);
 			}
