@@ -85,8 +85,7 @@ class Zest_Config_Advanced{
 		if($this->_cache){
 			// récupération du fichier en cache s'il existe
 			if($this->_cache->isReadable()){
-				require_once $this->_cache->getPathname();
-//				$this->_data = @unserialize($this->_cache->getContents());
+				include $this->_cache->getPathname();
 			}
 			
 			// on vérifie la date de modification de chaque fichier pour savoir si un d'entre eux a été mis à jour
@@ -121,7 +120,6 @@ class Zest_Config_Advanced{
 			$this->_loadConfigs($filename);
 			if($this->_cache && $this->_data){
 				$this->_cache->putContents('<?php $this->_data = '.var_export($this->_data, true).';');
-//				$this->_cache->putContents(serialize($this->_data));
 			}
 		}
 		
@@ -186,7 +184,7 @@ class Zest_Config_Advanced{
 		
 		// récupération des enfants
 		$childrenKey = ($insertKey ? $insertKey.'.' : '').'children';
-		$children = $this->_get($childrenKey, $data);
+		$children = (array) $this->_get($childrenKey, $data);
 		
 		// suppression du tableau children
 		$parent = $this->_get($insertKey, $data);
