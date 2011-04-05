@@ -23,7 +23,6 @@ class Zest_Minify{
 	protected static function _getInstance(){
 		if(!self::$_instance){
 			self::$_instance = new self();
-			set_include_path(get_include_path().PATH_SEPARATOR.LIBRARIES_PATH.'/minify');
 		}
 		return self::$_instance;
 	}
