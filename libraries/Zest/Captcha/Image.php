@@ -109,6 +109,18 @@ class Zest_Captcha_Image extends Zend_Captcha_Image{
 	/**
 	 * @return string
 	 */
+	public function generate(){
+		// désactivation du plugin de cache s'il est utilisé
+		$frontcontroller = Zest_Controller_Front::getInstance();
+		if($frontcontroller->hasPlugin('Zest_Controller_Plugin_Cache')){
+			$frontcontroller->unregisterPlugin('Zest_Controller_Plugin_Cache');
+		}
+		return parent::generate();
+	}
+	
+	/**
+	 * @return string
+	 */
 	protected function _generateWord(){
 		if(self::$_generateWordHook){
 			return (string) call_user_func(self::$_generateWordHook, $this);
