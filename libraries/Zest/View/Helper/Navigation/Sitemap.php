@@ -59,7 +59,7 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 	 */
 	public function addUrl($loc, array $options = array()){
 		if($this->_useSitemapindex){
-			throw new Zest_Sitemap_Exception('Un sitemap ne peut pas être composé à la fois de "sitemapindex" et de "urlset".');
+			throw new Zest_View_Exception('Un sitemap ne peut pas être composé à la fois de "sitemapindex" et de "urlset".');
 		}
 		$this->_useUrlset = true;
 		
@@ -76,7 +76,7 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 	 */
 	public function addSitemap($loc, array $options = array()){
 		if($this->_useUrlset){
-			throw new Zest_Sitemap_Exception('Un sitemap ne peut pas être composé à la fois de "sitemapindex" et de "urlset".');
+			throw new Zest_View_Exception('Un sitemap ne peut pas être composé à la fois de "sitemapindex" et de "urlset".');
 		}
 		$this->_useSitemapindex = true;
 		
@@ -201,7 +201,7 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 			$sitemapIndex->appendChild($sitemapNode);
 
 			if($this->getUseSitemapValidators() && !$locValidator->isValid($url)){
-				throw new Zest_Sitemap_Exception(sprintf('L\'url "%s" n\'est pas valide.', $url));
+				throw new Zest_View_Exception(sprintf('L\'url "%s" n\'est pas valide.', $url));
 			}
 
 			// put url in 'loc' element
@@ -227,7 +227,7 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 		// validate using schema if specified
 		if($this->getUseSchemaValidation()){
 			if(!@$dom->schemaValidate(self::SITEMAPINDEX_XSD)){
-				throw new Zest_Sitemap_Exception(sprintf('En se basant sur le XSD "%s", le sitemap n\'est pas valide.', self::SITEMAPINDEX_XSD));
+				throw new Zest_View_Exception(sprintf('En se basant sur le XSD "%s", le sitemap n\'est pas valide.', self::SITEMAPINDEX_XSD));
 			}
 		}
 
@@ -281,7 +281,7 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 	 */
 	public function send(Zend_Controller_Response_Abstract $response){
 		if(headers_sent()){
-			throw new Zest_Sitemap_Exception('Impossible d\'envoyer le sitemap car les headers ont déjà été envoyés.');
+			throw new Zest_View_Exception('Impossible d\'envoyer le sitemap car les headers ont déjà été envoyés.');
 		}
 		
 		$response
