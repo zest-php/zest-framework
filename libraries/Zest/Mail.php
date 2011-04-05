@@ -50,6 +50,21 @@ class Zest_Mail extends Zend_Mail{
 	}
 	
 	/**
+	 * @param string $html
+	 * @param string $charset
+	 * @param string $encoding
+	 * @return Zest_Mail
+	 */
+	public function setBodyHtml($html, $charset = null, $encoding = Zend_Mime::ENCODING_QUOTEDPRINTABLE){
+		if($this->_layout){
+			$this->_layout->{$this->_layout->getContentKey()} = $html;
+			$html = $this->_layout->render();
+		}
+		parent::setBodyHtml($html, $charset, $encoding);
+		return $this;
+	}
+	
+	/**
 	 * @param string $name
 	 * @param array $vars
 	 * @param string $charset
@@ -58,16 +73,8 @@ class Zest_Mail extends Zend_Mail{
 	 */
 	public function setBodyHtmlScript($name, array $vars = array(), $charset = null, $encoding = Zend_Mime::ENCODING_QUOTEDPRINTABLE){
 		$view = Zest_View::getStaticView();
-		
 		$content = $view->partial($name, $vars);
-		
-		if($this->_layout){
-			$this->_layout->{$this->_layout->getContentKey()} = $content;
-			$content = $this->_layout->render();
-		}
-		
 		$this->setBodyHtml($content, $charset, $encoding);
-		
 		return $this;
 	}
 	
@@ -86,6 +93,9 @@ class Zest_Mail extends Zend_Mail{
 		}
 		else{
 			if(is_null($layoutPath)){
+				if(!Zest_Layout::getMvcInstance()){
+					throw new Zest_Mail_Exception('La variable $layoutPath doit être renseignée dans Zest_Mail::setBodyHtmlLayout($layout, $layoutPath).');
+				}
 				$layoutPath = Zest_Layout::getMvcInstance()->getLayoutPath();
 			}
 			$this->_layout = new Zest_Layout($layoutPath);
