@@ -12,7 +12,7 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 	protected static $_instance = null;
 	
 	/**
-	 * @var Zend_Application
+	 * @var Zest_Application
 	 */
 	protected $_application = null;
 	
@@ -22,11 +22,11 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 	protected $_modulesConfigFormat = null;
 	
 	/**
-	 * @param Zend_Application $application
+	 * @param Zest_Application $application
 	 * @param string|array $options
 	 * @return void
 	 */
-	public function __construct(Zend_Application $application, $options){
+	public function __construct(Zest_Application $application, $options, $instance = false){
 		if(is_string($options)){
 			$options = array('pathname' => $options);
 		}
@@ -40,7 +40,9 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 			unset($options['modules_config_format']);
 		}
 		
-		self::$_instance = $this;
+		if($instance){
+			self::$_instance = $this;
+		}
 		
 		if(isset($options['pathname'])){
 			$pathname = $options['pathname'];
@@ -50,15 +52,6 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 		else{
 			throw new Zest_Config_Exception('Aucun fichier de configuration défini.');
 		}
-	}
-	
-	/**
-	 * @param Zend_Application $application
-	 * @param string|array $options
-	 * @return void
-	 */
-	public static function init(Zend_Application $application, $options){
-		new self($application, $options);
 	}
 	
 	/**
@@ -78,9 +71,21 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 	}
 	
 	/**
+	 * @param Zest_Application $application
+	 * @param string|array $options
+	 * @return void
+	 */
+	public static function initInstance(Zest_Application $application, $options){
+		new self($application, $options, true);
+	}
+	
+	/**
 	 * @return Zest_Config_Application
 	 */
 	public static function getInstance(){
+		if(!self::hasInstance()){
+			throw new Zest_Config_Exception('L\'instance n\'a pas encore été créée.');
+		}
 		return self::$_instance;
 	}
 	
@@ -97,6 +102,13 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 	 */
 	public static function setInstance($instance){
 		self::$_instance = $instance;
+	}
+	
+	/**
+	 * @return void
+	 */
+	public static function resetInstance(){
+		self::$_instance = null;
 	}
 	
 	/**
@@ -118,18 +130,17 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 		
 		if($this->_application && $this->_modulesConfigFormat){
 			$modulesDirectories = $this->_application->getModulesDirectories();
-			
 			if($modulesDirectories){			
 				// modules
 				foreach($modulesDirectories as $module => $modulesDirectory){
 					$this->_set('module.'.$module, array());
-					$this->_set('module_directory', $modulesDirectory);
+					$this->_set('module.'.$module.'.module_directory', $modulesDirectory);
 					
 					$iniFile = $modulesDirectory.sprintf($this->_modulesConfigFormat, $module);
-					$this->_loadConfig($iniFile, 'module.'.$module);
-					$this->_recursiveReplaceVars($this->_data);
 					
-					$this->_unset('module_directory');
+					$this->_loadConfig($iniFile, 'module.'.$module);
+					$dataVarsSource = $this->_merge($this->_data, $this->_get('module.'.$module));
+					$this->_recursiveReplaceVars($this->_data, $dataVarsSource);
 				}
 				
 				// sauvegarde du tableau permettant le recalcul du fichier de cache
@@ -139,8 +150,6 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 						->_set('_cache_creation', time());
 			}
 		}
-		
-		$this->_unset('request');
 	}
 	
 }

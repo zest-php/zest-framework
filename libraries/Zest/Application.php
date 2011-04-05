@@ -92,7 +92,7 @@ class Zest_Application extends Zend_Application{
 	 */
 	protected function _initConfig($options){
 		if($options){
-			Zest_Config::init($this, $options);
+			Zest_Config::initInstance($this, $options);
 			
 			// récupération de la configuration
 			$options = Zest_Config::get();
@@ -102,8 +102,9 @@ class Zest_Application extends Zend_Application{
 			$options = $this->mergeOptions($this->getOptions(), $options);
 			$this->setOptions($options);
 			$this->getBootstrap()->setOptions($options);
+			
+			return Zest_Config::getInstance();
 		}		
-		return Zest_Config::getInstance();
 	}
 	
 	/**
