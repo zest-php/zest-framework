@@ -105,8 +105,7 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 	 * @return Zest_Controller_Plugin_Cache
 	 */
 	public function clean($module, $controller, $action){
-		$cacheId = $this->_getCacheId($module, $controller, $action);
-		$this->_getCache()->remove($cacheId);
+		$this->_getCache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, $this->_getTags($module, $controller, $action));
 		return $this;
 	}
 	
@@ -116,6 +115,107 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 	public function cleanAll(){
 		$this->_getCache()->clean(Zend_Cache::CLEANING_MODE_ALL);
 		return $this;
+	}
+	
+	/**
+	 * @param string $module
+	 * @return Zest_Controller_Plugin_Cache
+	 */
+	public function cleanModule($module){
+		$this->_getCache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_getTagModule($module)));
+		return $this;
+	}
+	
+	/**
+	 * @param string $controller
+	 * @return Zest_Controller_Plugin_Cache
+	 */
+	public function cleanController($controller){
+		$this->_getCache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_getTagController($controller)));
+		return $this;
+	}
+	
+	/**
+	 * @param string $action
+	 * @return Zest_Controller_Plugin_Cache
+	 */
+	public function cleanAction($action){
+		$this->_getCache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_getTagAction($action)));
+		return $this;
+	}
+	
+	/**
+	 * @param string $module
+	 * @param string $controller
+	 * @return Zest_Controller_Plugin_Cache
+	 */
+	public function cleanModuleController($module, $controller){
+		$this->_getCache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_getTagModule($module), $this->_getTagController($controller)));
+		return $this;
+	}
+	
+	/**
+	 * @param string $controller
+	 * @param string $action
+	 * @return Zest_Controller_Plugin_Cache
+	 */
+	public function cleanControllerAction($controller, $action){
+		$this->_getCache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_getTagController($controller), $this->_getTagAction($action)));
+		return $this;
+	}
+	
+	/**
+	 * @param string $module
+	 * @param string $controller
+	 * @param string $action
+	 * @return string
+	 */
+	protected function _getTags($module, $controller, $action){
+		return array($this->_getTagModule($module), $this->_getTagController($controller), $this->_getTagAction($action));
+	}
+	
+	/**
+	 * @param string $module
+	 * @return string
+	 */
+	protected function _getTagModule($module){
+		$front = Zest_Controller_Front::getInstance();
+		$dispatcher = $front->getDispatcher();
+		
+		$module = $module ? $module : $front->getDefaultModule();
+		return $dispatcher->formatModuleName($module);
+	}
+	
+	/**
+	 * @param string $controller
+	 * @return string
+	 */
+	protected function _getTagController($controller){
+		$front = Zest_Controller_Front::getInstance();
+		$dispatcher = $front->getDispatcher();
+		
+		$controller = $controller ? $controller : $front->getDefaultControllerName();
+		return $dispatcher->formatControllerName($controller);
+	}
+	
+	/**
+	 * @param string $action
+	 * @return string
+	 */
+	protected function _getTagAction($action){
+		$front = Zest_Controller_Front::getInstance();
+		$dispatcher = $front->getDispatcher();
+		
+		$action = $action ? $action : $front->getDefaultAction();
+		return $dispatcher->formatActionName($action);
+	}
+	
+	/**
+	 * @param Zend_Controller_Request_Abstract $request
+	 * @return string
+	 */
+	protected function _getCacheId(Zend_Controller_Request_Abstract $request){
+		return ($this->_cacheIdPrefix ? $this->_cacheIdPrefix.'_' : '').md5($request->getRequestUri());
 	}
 	
 	/**
@@ -139,24 +239,7 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 	}
 	
 	/**
-	 * @return string
-	 */
-	protected function _getCacheId($module, $controller, $action){
-		$front = Zest_Controller_Front::getInstance();
-		
-		$module = $module ? $module : $front->getDefaultModule();
-		$controller = $controller ? $controller : $front->getDefaultControllerName();
-		$action = $action ? $action : $front->getDefaultAction();
-		
-		$dispatcher = $front->getDispatcher();
-		$module = $dispatcher->formatModuleName($module);
-		$controller = $dispatcher->formatControllerName($controller);
-		$action = $dispatcher->formatActionName($action);
-		
-		return ($this->_cacheIdPrefix ? $this->_cacheIdPrefix.'_' : '').$module.'_'.$controller.'_'.$action;
-	}
-	
-	/**
+	 * @param Zend_Controller_Request_Abstract $request
 	 * @return boolean
 	 */
 	protected function _isCacheable(Zend_Controller_Request_Abstract $request){
@@ -173,7 +256,7 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 	public function preDispatch(Zend_Controller_Request_Abstract $request){
 		if(!$this->_isCacheable($request)) return;
 		
-		$cacheId = $this->_getCacheId($request->getModuleName(), $request->getControllerName(), $request->getActionName());
+		$cacheId = $this->_getCacheId($request);
 		$cache = $this->_getCache();
 		
 		if($mtime = $cache->test($cacheId)){
@@ -187,7 +270,7 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 					exit;
 				}
 			}
-		
+			
 			echo $cache->load($cacheId);
 			exit;
 		}
@@ -204,11 +287,11 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 			$this->_defaultLifetime = min($this->_lifetimes);
 		}
 		
-		$cacheId = $this->_getCacheId($request->getModuleName(), $request->getControllerName(), $request->getActionName());
-		$cache = $this->_getCache();
+		$cacheId = $this->_getCacheId($request);
+		$tags = $this->_getTags($request->getModuleName(), $request->getControllerName(), $request->getActionName());
 		
 		$body = $this->getResponse()->getBody();
-		$cache->save($body, $cacheId);
+		$this->_getCache()->save($body, $cacheId, $tags);
 		
 		$this->getResponse()->setHeader('Last-Modified', date('r'));
 	}
