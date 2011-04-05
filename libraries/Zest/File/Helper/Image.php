@@ -51,7 +51,7 @@ class Zest_File_Helper_Image extends Zest_File_Helper_Abstract_Convertable{
 	 * @param integer $height
 	 * @return array
 	 */
-	public function getSize(array $options){
+	public function getSize(array $options = array()){
 		if(!$this->_file->isReadable()) return null;
 		
 		list($width, $height, $type, $attr) = getimagesize($this->_file->getPathname());
@@ -90,7 +90,7 @@ class Zest_File_Helper_Image extends Zest_File_Helper_Abstract_Convertable{
 		}
 	
 		// qualité du jpeg
-		$quality = $outputType == IMAGETYPE_PNG ? null : 100;
+		$quality = $outputType == IMAGETYPE_PNG ? null : 90;
 		if($outputType == IMAGETYPE_JPEG && isset($options['quality'])){
 			$quality = $options['quality'];
 		}
