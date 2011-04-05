@@ -22,6 +22,27 @@ class Zest_View_Helper_Head extends Zend_View_Helper_Abstract{
 	}
 	
 	/**
+	 * @return string
+	 */
+	public function toString(){
+		$helpers = array('headTitle', 'headMeta', 'headLink', 'headStyle', 'headScript');
+		$head = '';
+		foreach($helpers as $helper){
+			if($html = $this->view->$helper()->toString()){
+				$head .= $html.PHP_EOL;
+			}
+		}
+		return $head;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function __toString(){
+		return $this->toString();
+	}
+	
+	/**
 	 * @param string $title
 	 * @param string $placement
 	 * @return Zest_View_Helper_Head|string

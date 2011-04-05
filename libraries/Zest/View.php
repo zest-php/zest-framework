@@ -21,10 +21,10 @@ class Zest_View extends Zend_View{
 	 * @return void
 	 */
 	public function __construct(array $config = array()){
+		parent::__construct($config);
+		
 		$this->addHelperPath('Zest/View/Helper', 'Zest_View_Helper');
 		$this->addFilterPath('Zest/View/Filter', 'Zest_View_Filter');
-		
-		parent::__construct($config);
 	}
 	
 	/**
@@ -80,7 +80,7 @@ class Zest_View extends Zend_View{
 			$helper->setDoctype($doctype);
 		}
 		else{
-			trigger_error(sprintf('le doctype "%s" n\'existe pas', $doctype), E_USER_ERROR);
+			throw new Zest_View_Exception(sprintf('Le doctype "%s" n\'existe pas.', $doctype));
 		}
 		return $this;
 	}
@@ -95,6 +95,7 @@ class Zest_View extends Zend_View{
 		}
 		else{
 			if(!$viewRenderer->view){
+				$viewRenderer->view = new Zest_View();
 				$viewRenderer->initView();
 			}
 			return $viewRenderer->view;
@@ -109,13 +110,13 @@ class Zest_View extends Zend_View{
 		if(is_string($engine)){
 			$class = 'Zest_View_Engine_'.ucfirst($engine);
 			if(!@class_exists($class)){
-				trigger_error(sprintf('la classe "%s" n\'existe pas.', $class), E_USER_ERROR);
+				throw new Zest_View_Exception(sprintf('La classe "%s" n\'existe pas.', $class));
 			}
 			$engine = new $class($this);
 		}
 		$this->_engine = $engine;
 		if(!$this->_engine instanceof Zest_View_Engine_Abstract){
-			trigger_error('le moteur de rendu doit hériter de Zest_View_Engine_Abstract.', E_USER_ERROR);
+			throw new Zest_View_Exception('Le moteur de rendu doit hériter de Zest_View_Engine_Abstract.');
 		}
 		return $this;
 	}
