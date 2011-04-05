@@ -167,7 +167,7 @@ class Zest_Db_Model_NestedSet{
 							break;
 						case Zest_Db_Model_Nested::MODE_ALSO:
 							if($child){
-								$newObject->setData($child);
+								$newObject->setData($child->toArray());
 							}
 							break;
 					}
