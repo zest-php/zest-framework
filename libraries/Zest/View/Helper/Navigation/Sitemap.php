@@ -285,7 +285,7 @@ class Zest_View_Helper_Navigation_Sitemap extends Zend_View_Helper_Navigation_Si
 		}
 		
 		$response
-			->setHeader('content-type', 'text/xml; charset=utf-8')
+			->setHeader('Content-Type', 'text/xml; charset=utf-8')
 			->setBody($this->render())
 			->sendResponse();
 			

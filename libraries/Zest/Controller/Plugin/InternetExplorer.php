@@ -27,7 +27,7 @@ class Zest_Controller_Plugin_InternetExplorer extends Zend_Controller_Plugin_Abs
 	 * @return Zest_Controller_Plugin_IE
 	 */
 	public function setRequest(Zend_Controller_Request_Abstract $request){
-		$userAgent = $request->getHeader('USER_AGENT');
+		$userAgent = $request->getHeader('user-agent');
 		
 		$this->_isInternetExplorer = (boolean) strpos($userAgent, 'MSIE');
 		if($this->_isInternetExplorer){

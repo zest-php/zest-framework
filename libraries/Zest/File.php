@@ -266,7 +266,7 @@ class Zest_File extends Zest_File_Abstract{
 		}
 		
 		session_cache_limiter('must-revalidate');
-		header('content-length: '.$file->getSize());
+		header('Content-Length: '.$file->getSize());
 		
 		if(!isset($options['header']) || $options['header']){
 			// filename
@@ -281,29 +281,29 @@ class Zest_File extends Zest_File_Abstract{
 			$filename .=  '.'.$file->getExtension();
 			
 			if(!empty($options['forcedownload'])){
-				header('content-disposition: attachment; filename='.$filename);
-				header('content-type: application/force-download');
-				header('content-transfer-encoding: '.$file->getMimeType());
+				header('Content-Disposition: attachment; filename='.$filename);
+				header('Content-Type: application/force-download');
+				header('Content-Transfer-Encoding: '.$file->getMimeType());
 			}
 			else{
-				header('content-type: '.$file->getMimeType());
+				header('Content-Type: '.$file->getMimeType());
 			}
 			
-			header('content-description: file transfer');
-			header('cache-control: public');
-			header('cache-control: must-revalidate, post-check=0, pre-check=0');
-			header('pragma: public');
-			header('expires: 0');
+			header('Content-Description: file transfer');
+			header('Cache-Control: public');
+			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			header('Pragma: public');
+			header('Expires: 0');
 		
 			// status 304
 			if(!isset($options['304']) || $options['304']){
 				$mtime = $this->getMTime();
-				header('last-modified: ' . date('r', $mtime));
-				$if_modified_since = $request->getHeader('if_modified_since');
+				header('Last-Modified: ' . date('r', $mtime));
+				$if_modified_since = $request->getHeader('if-modified-since');
 				if($if_modified_since){
 					$if_modified_since = strtotime($if_modified_since);
 					if(!($if_modified_since < $mtime)){
-						header('HTTP/1.0 304 Not Modified');
+						header('HTTP/1.1 304 Not Modified');
 						exit;
 					}
 				}

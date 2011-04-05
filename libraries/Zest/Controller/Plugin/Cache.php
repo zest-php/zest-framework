@@ -176,7 +176,18 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 		$cacheId = $this->_getCacheId($request->getModuleName(), $request->getControllerName(), $request->getActionName());
 		$cache = $this->_getCache();
 		
-		if($cache->test($cacheId)){
+		if($mtime = $cache->test($cacheId)){
+			header('Last-Modified: ' . date('r', $mtime));
+				
+			$if_modified_since = $request->getHeader('if-modified-since');
+			if($if_modified_since){
+				$if_modified_since = strtotime($if_modified_since);
+				if(!($if_modified_since < $mtime)){
+					header('HTTP/1.1 304 Not Modified');
+					exit;
+				}
+			}
+		
 			echo $cache->load($cacheId);
 			exit;
 		}
@@ -198,6 +209,8 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 		
 		$body = $this->getResponse()->getBody();
 		$cache->save($body, $cacheId);
+		
+		$this->getResponse()->setHeader('Last-Modified', date('r'));
 	}
 	
 }

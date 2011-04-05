@@ -33,7 +33,7 @@ class Zest_File_Helper_Pdf_Zend extends Zest_File_Helper_Pdf_Abstract{
 		$page	->setFont(Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA), 32)
 				->drawText('Hello world !', 72, 720, 'UTF-8');
 		
-		header('content-type: application/pdf');
+		header('Content-Type: application/pdf');
 		echo $this->_getZendPdf()->render();
 		exit;
 		
