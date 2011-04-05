@@ -34,6 +34,9 @@ class Zest_Translate extends Zend_Translate{
 		foreach($translations as $localeTranslation => $data){
 			if(!$translate){
 				$options = array_merge((array) $options, array('adapter' => $adapter, 'content' => $data, 'locale' => $localeTranslation));
+				if(!isset($options['cache']) && $cache = self::getCache()){
+					$options['cache'] = $cache;
+				}
 				$translate = new self($options);
 			}
 			else{
@@ -50,9 +53,6 @@ class Zest_Translate extends Zend_Translate{
 		if($registerAsDefault){
 			Zend_Registry::set('Zend_Translate', $translate);
 		}
-		
-		// on s'assure que le cache soit créé s'il le peut
-		self::getCache();
 		
 		return $translate;
 	}
@@ -101,15 +101,17 @@ class Zest_Translate extends Zend_Translate{
 		
 		// gestion des variables
 		if($vars){
+			/**
+			 * on pourrait faire ce qui suit et avoir des variables nommées
+			 * mais l'utilisation de vsprintf est plus courante (exemple : gettext)
+			 * 
+			 * $vars = array_change_key_case($vars, CASE_LOWER);
+			 * foreach($vars as $name => $value){
+			 * 		$translate = str_replace('{$'.$name.'}', $value, $translate);
+			 * }
+			 */
 			return vsprintf($translate, $vars);
 		}
-		
-//		if($vars){
-//			$vars = array_change_key_case($vars, CASE_LOWER);
-//			foreach($vars as $name => $value){
-//				$translate = str_replace('{$'.$name.'}', $value, $translate);
-//			}
-//		}
 		
 		return $translate;
 	}
@@ -132,6 +134,14 @@ class Zest_Translate extends Zend_Translate{
 			self::setCache(Zend_Cache::factory('Core', 'File', $frontend, $backend));
 		}
 		return parent::getCache();
+	}
+	
+	/**
+	 * @return void
+	 */
+	public static function removeCache(){
+		self::$_cacheDir = null;
+		parent::removeCache();
 	}
 
 }
