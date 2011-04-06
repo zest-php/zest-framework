@@ -5,7 +5,7 @@
  * @package Zest_View
  * @subpackage Helper
  */
-class Zest_View_Helper_Url extends Zend_View_Helper_Url{
+class Zest_View_Helper_Url extends Zend_View_Helper_Abstract{
 	
 	/**
 	 * @param array|string $urlOptions

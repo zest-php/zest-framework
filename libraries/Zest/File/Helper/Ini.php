@@ -28,7 +28,7 @@ class Zest_File_Helper_Ini extends Zest_File_Helper_Abstract{
 	 */
 	public function getArray(){
 		$this->_init();
-		return $this->_config->get();
+		return $this->_config->getConfig();
 	}
 	
 	/**
@@ -36,7 +36,7 @@ class Zest_File_Helper_Ini extends Zest_File_Helper_Abstract{
 	 */
 	public function getConfig($key){
 		$this->_init();
-		return $this->_config->get($key);
+		return $this->_config->getConfig($key);
 	}
 	
 	/**

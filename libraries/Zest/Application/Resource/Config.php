@@ -40,7 +40,7 @@ class Zest_Application_Resource_Config extends Zend_Application_Resource_Resourc
 	public function getModulesDirectories(Zest_Config_Application $config){
 		$this->_loadConfigs = true;
 		return $this->getBootstrap()
-				->setOptions($config->get())
+				->setOptions($config->getConfig())
 				->bootstrap('frontcontroller')
 				->getPluginResource('frontcontroller')->getModulesDirectories();
 	}

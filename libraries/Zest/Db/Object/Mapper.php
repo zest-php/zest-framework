@@ -57,7 +57,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 		}
 		$request = Zest_Db_Model_Request::factory($data);
 		$request->setOption($options);
-		$create = parent::create($request);
+		$create = $this->createObject($request);
 		if($create){
 			$object->setData($create->toArray());
 		}
@@ -116,7 +116,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	public function save(Zest_Db_Object $object, array $options = array()){
 		$request = Zest_Db_Model_Request::factory(array('object' => $object));
 		$request->setOption($options);
-		return parent::save($request);
+		return $this->saveObject($request);
 	}
 	
 	/**
@@ -129,7 +129,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 		if($intersectPrimary){
 			$request = Zest_Db_Model_Request::factory($intersectPrimary);
 			$request->setOption($options);
-			return parent::delete($request);
+			return $this->deleteObject($request);
 		}
 		return false;
 	}

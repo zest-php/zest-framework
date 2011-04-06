@@ -69,7 +69,7 @@ class Zest_Config_Advanced{
 	 * @param string $key
 	 * @return array|string
 	 */
-	public function get($key = null, $throwExceptions = false){
+	public function getConfig($key = null, $throwExceptions = false){
 		$return = $this->_get($key);
 		if($throwExceptions && is_null($return)){
 			throw new Zest_Config_Exception(sprintf('La clef de configuration "%s" n\'existe pas.', $key));
@@ -131,7 +131,7 @@ class Zest_Config_Advanced{
 	 * @param array $initData
 	 * @return array
 	 */
-	protected function _loadConfigs($filename, $initData = array()){
+	protected function _loadConfigs($filename, array $initData = array()){
 		$this->_data = $initData;
 		
 		// initialisation du tableau permettant le recalcul du fichier de cache

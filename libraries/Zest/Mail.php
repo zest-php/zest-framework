@@ -143,13 +143,13 @@ class Zest_Mail extends Zend_Mail{
 	 * @param string|Zest_File|Zend_Mime_Part $file
 	 * @return Zest_Mail
 	 */
-	public function addAttachment($file){
+	public function addAttachmentFile($file){
 		if(is_string($file)){
 			$file = new Zest_File($file);
 		}
 		
 		if($file instanceof Zend_Mime_Part){
-			parent::addAttachment($file);
+			$this->addAttachment($file);
 		}
 		else if($file instanceof Zest_File){
 			if($file->isReadable()){
@@ -172,7 +172,7 @@ class Zest_Mail extends Zend_Mail{
 	 * @param string|Zest_File|Zend_Mime_Part $file
 	 * @return string
 	 */
-	public function addInlineImage($file){
+	public function addAttachmentInlineImage($file){
 		if(is_string($file)){
 			$file = new Zest_File($file);
 		}

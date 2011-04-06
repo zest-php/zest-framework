@@ -31,7 +31,7 @@ class Zest_Smarty extends Smarty{
 	 * @param boolean $display
 	 * @return string
 	 */
-	public function fetch($name, $cache_id, $compile_id, $display = false){
+	public function fetch($name, $cache_id = null, $compile_id = null, $display = false){
 		$forceCompile = $this->force_compile;
 		$content = parent::fetch($name, $cache_id, $compile_id, $display);
 		if($forceCompile){

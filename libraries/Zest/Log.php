@@ -41,7 +41,7 @@ class Zest_Log extends Zest_Log_Abstract{
 	 * @return void
 	 */
 	public static function addWriter($priority, $writerType, $args = null){
-		self::_getInstance()->_addWriter($priority, $writerType, $args);
+		self::_getInstance()->_addWriterPriority($priority, $writerType, $args);
 	}
 	
 	/**
@@ -50,8 +50,8 @@ class Zest_Log extends Zest_Log_Abstract{
 	 * @param array $args
 	 * @return void
 	 */	
-	protected function _addWriter($priority, $writerType, $args){
-		$writer = parent::_addWriter($writerType, $args);
+	protected function _addWriterPriority($priority, $writerType, $args){
+		$writer = $this->_addWriter($writerType, $args);
 		
 		if(is_string($priority)){
 			$priority = strtoupper($priority);

@@ -60,7 +60,7 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 	 * @param boolean $throwExceptions
 	 * @return array|string
 	 */
-	public function get($key = null, $throwExceptions = false){
+	public static function get($key = null, $throwExceptions = false){
 		if(is_null(self::$_instance)){
 			throw new Zest_Config_Exception('L\'instance n\'a pas encore été créée.');
 		}
@@ -83,20 +83,19 @@ class Zest_Config_Application extends Zest_Config_Advanced{
 	
 	/**
 	 * @param string $filename
+	 * @param array $initData
 	 * @return void
 	 */
-	protected function _loadConfigs($filename){
+	protected function _loadConfigs($filename, array $initData = array()){
 		$request = new Zend_Controller_Request_Http();	
 		
-		parent::_loadConfigs($filename, array('request' => array(
-			'base_path' => $request->getBasePath(),
-			'base_url' => $request->getBaseUrl(),
-			'client_ip' => $request->getClientIp(),
-			'http_host' => $request->getHttpHost(),
-			'path_info' => $request->getPathInfo(),
-			'request_uri' => $request->getRequestUri(),
-			'scheme' => $request->getScheme()
-		)));
+		$defaultVars = array('request' => array(
+			'base_path' => $request->getBasePath(),		// Everything in REQUEST_URI before PATH_INFO
+			'http_host' => $request->getHttpHost(),		// URI host + port
+			'scheme' => $request->getScheme()			// URI scheme
+		));
+		
+		parent::_loadConfigs($filename, array_merge($defaultVars, $initData));
 		
 		if($this->_callModulesDirectories){
 			$modulesDirectories = call_user_func_array($this->_callModulesDirectories, array($this));

@@ -323,7 +323,7 @@ class Zest_Db_Model{
 	 * @param Zest_Db_Model_Request $request
 	 * @return object
 	 */
-	public function create(Zest_Db_Model_Request $request){
+	public function createObject(Zest_Db_Model_Request $request){
 		if(method_exists($this->_getAdapter(), 'create')){
 			return $this->_getAdapter()->create($request);
 		}
@@ -337,7 +337,7 @@ class Zest_Db_Model{
 	 * @param Zest_Db_Model_Request $request
 	 * @return boolean
 	 */
-	public function save(Zest_Db_Model_Request $request){
+	public function saveObject(Zest_Db_Model_Request $request){
 		if($request->object instanceof Zest_Db_Object){
 			if(!$request->object->toArray()){
 				throw new Zest_Db_Exception('Impossible de faire une requête à partir d\'un objet vide.');
@@ -359,6 +359,14 @@ class Zest_Db_Model{
 	 * @return object
 	 */
 	public function get(Zest_Db_Model_Request $request){
+		return $this->getObject($request);
+	}
+	
+	/**
+	 * @param Zest_Db_Model_Request $request
+	 * @return object
+	 */
+	public function getObject(Zest_Db_Model_Request $request){
 		$request->setOption('limit', array('count' => 1, 'offset' => 0));
 		$arrayObjects = $this->getArray($request);
 		
@@ -375,6 +383,14 @@ class Zest_Db_Model{
 	 * @return array
 	 */
 	public function getArray(Zest_Db_Model_Request $request = null){
+		return $this->getArrayObjects($request);
+	}
+	
+	/**
+	 * @param Zest_Db_Model_Request $request
+	 * @return array
+	 */
+	public function getArrayObjects(Zest_Db_Model_Request $request = null){
 		if(is_null($request)){
 			$request = Zest_Db_Model_Request::factory();
 		}
@@ -418,7 +434,7 @@ class Zest_Db_Model{
 	 * @param Zest_Db_Model_Request $request
 	 * @return boolean
 	 */
-	public function delete(Zest_Db_Model_Request $request){
+	public function deleteObject(Zest_Db_Model_Request $request){
 		return $this->_getAdapter()->delete($request);
 	}
 	
