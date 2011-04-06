@@ -226,7 +226,7 @@ abstract class Zest_Controller_Plugin_Assets_Abstract{
 				$url = $view->serverUrl($url);
 			}
 			else{
-				$url = $view->serverUrl($this->_request->getBaseUrl().'/'.$url);
+				$url = $view->serverUrl($this->_request->getBasePath().'/'.$url);
 			}
 		}
 		return $url;

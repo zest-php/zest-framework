@@ -45,7 +45,7 @@ class Zest_Controller_Front extends Zend_Controller_Front{
 			$scriptFilename = trim($scriptFilename, '/');
 			
 			$relativeDir = $this->_getRelativeDir($scriptFilename, $destination);
-			$baseUrl = trim($this->getRequest()->getBaseUrl(), '/');
+			$baseUrl = trim($this->getRequest()->getBasePath(), '/');
 			$url = '/'.$baseUrl.'/'.$relativeDir;
 			
 			if($clean){
