@@ -85,7 +85,7 @@ class Zest_Application_Module_Bootstrap extends Zend_Application_Module_Bootstra
 	 */
 	public function getModuleDirectory($module){
 		$module = strtolower($module);
-		$dirs = $this->getApplication()->getModulesDirectories();
+		$dirs = $this->getApplication()->getBootstrap()->getPluginResource('frontcontroller')->getModulesDirectories();
 		if(isset($dirs[$module])){
 			return $dirs[$module];
 		}
@@ -98,7 +98,7 @@ class Zest_Application_Module_Bootstrap extends Zend_Application_Module_Bootstra
 	 */
 	public function getModuleVersion($module){
 		$module = strtolower($module);
-		$versions = $this->getApplication()->getModulesVersions();
+		$versions = $this->getApplication()->getBootstrap()->getPluginResource('frontcontroller')->getModulesVersions();
 		if(isset($versions[$module])){
 			return $versions[$module];
 		}

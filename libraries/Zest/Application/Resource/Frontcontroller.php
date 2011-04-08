@@ -101,6 +101,16 @@ class Zest_Application_Resource_Frontcontroller extends Zend_Application_Resourc
 	/**
 	 * @return array
 	 */
+	public function getModulesVersions(){
+		if(is_null($this->_modulesVersions)){
+			throw new Zest_Application_Exception('La ressource n\'a pas encore été initialisée.');
+		}
+		return $this->_modulesVersions;
+	}
+	
+	/**
+	 * @return array
+	 */
 	protected function _getModulesDirectories($moduledirectory, $modules, $moduledirectory_format){
 		$this->_modulesDirectories = array();
 		$this->_modulesVersions = array();
