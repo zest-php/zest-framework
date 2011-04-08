@@ -163,9 +163,9 @@ class Zest_Form extends Zend_Form{
 			if(!$element instanceof Zend_Form_Element_File) continue;
 			
 			$suffix = 0;
-			$newName = $initName = preg_replace('/_[0-9]+$/', '', $element->getName());
+			$newName = $initName = preg_replace('/_r[0-9]+$/', '', $element->getName());
 			while($this->getElement($newName, true)){
-				$newName = $initName.'_'.++$suffix;
+				$newName = $initName.'_r'.++$suffix;
 			}
 			
 			if($suffix){

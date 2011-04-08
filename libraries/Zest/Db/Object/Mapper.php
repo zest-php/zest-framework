@@ -65,7 +65,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	}
 	
 	/**
-	 * @param ineteger|array|Zest_Db_Model_Request $request
+	 * @param integer|array|Zest_Db_Model_Request $request
 	 * @param Zest_Db_Object $object
 	 * @param array $options
 	 * @return Zest_Db_Object

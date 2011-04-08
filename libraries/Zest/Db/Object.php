@@ -185,7 +185,7 @@ class Zest_Db_Object extends Zest_Data{
 	}
 	
 	/**
-	 * @param mixed|array $primary
+	 * @param integer|array $primary
 	 * @param array $options
 	 * @return Zest_Db_Object
 	 */
