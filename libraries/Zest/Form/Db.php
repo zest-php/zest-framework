@@ -7,9 +7,9 @@
 class Zest_Form_Db extends Zest_Form{
 	
 	/**
-	 * @var Zest_Db_Model
+	 * @var Zest_Db_Object_Mapper
 	 */
-	protected $_dbModel = null;
+	protected $_dbMapper = null;
 	
 	/**
 	 * @var Zest_Db_Object
@@ -17,35 +17,35 @@ class Zest_Form_Db extends Zest_Form{
 	protected $_dbObject = null;
 	
 	/**
-	 * @param string|Zest_Db_Model $dbModel
+	 * @param string|Zest_Db_Object_Mapper $dbMapper
 	 * @return Zest_Form_Db
 	 */
-	public function setDbModel($dbModel){
-		if(is_string($dbModel)){
-			$dbModel = Zest_Db_Model::getInstance($dbModel);
+	public function setDbMapper($dbMapper){
+		if(is_string($dbMapper)){
+			$dbMapper = Zest_Db_Model::getInstance($dbMapper);
 		}
-		if(!$dbModel instanceof Zest_Db_Model){
-			throw new Zest_Form_Exception('Le model doit hériter de Zest_Db_Model.');
+		if(!$dbMapper instanceof Zest_Db_Object_Mapper){
+			throw new Zest_Form_Exception('Le model doit hériter de Zest_Db_Object_Mapper.');
 		}
-		$this->_dbModel = $dbModel;
+		$this->_dbMapper = $dbMapper;
 		return $this;
 	}
 	
 	/**
-	 * @return Zest_Db_Model
+	 * @return Zest_Db_Object_Mapper
 	 */
-	public function getDbModel(){
-		if(is_null($this->_dbModel)){
+	public function getDbMapper(){
+		if(is_null($this->_dbMapper)){
 			throw new Zest_Form_Exception('Aucun model renseigné.');
 		}
-		return $this->_dbModel;
+		return $this->_dbMapper;
 	}
 	
 	/**
 	 * @return Zest_Db_Table
 	 */
 	public function getDbTable(){
-		return $this->getDbModel()->getDbTable();
+		return $this->getDbMapper()->getDbTable();
 	}
 	
 	/**
@@ -55,7 +55,7 @@ class Zest_Form_Db extends Zest_Form{
 	public function getDbObject($build = true, $throwExceptions = true){
 		if(is_null($this->_dbObject)){
 			if($build){
-				$this->_dbObject = $this->getDbModel()->toObject(array());
+				$this->_dbObject = $this->getDbMapper()->toObject(array());
 			}
 			else if($throwExceptions){
 				throw new Zest_Form_Exception('Aucun DbObject renseigné.');
@@ -70,7 +70,7 @@ class Zest_Form_Db extends Zest_Form{
 	 */
 	public function setDbObject($dbObject){
 		if(!$dbObject instanceof Zest_Db_Object){
-			$dbObject = $this->getDbObject()->find($dbObject);
+			$dbObject = $this->getDbMapper()->find($dbObject);
 		}
 		$this->_dbObject = $dbObject;
 		return $this;
