@@ -41,7 +41,7 @@ class Zest_Dir extends Zest_File_Abstract implements IteratorAggregate{
 		
 		$array = preg_split('/\/|\\\/', $this->getPathname());
 		
-		$currentPath = '';
+		$currentPath = array_shift($array).'/';
 		do{
 			$currentPath .= array_shift($array).'/';
 			$return = $dir->setPathname($currentPath)->mkdir();
