@@ -6,6 +6,11 @@
 require_once 'Zend/Application.php';
 
 /**
+ * @see Zest_Loader_Autoloader
+ */
+require_once 'Zest/Loader/Autoloader.php';
+
+/**
  * @category Zest
  * @package Zest_Application
  */
@@ -15,7 +20,8 @@ class Zest_Application extends Zend_Application{
 	 * @param array $options
 	 * @return void
 	 */
-	public function __construct($environment, $options = null){	
+	public function __construct($environment, $options = null){
+		Zest_Loader_Autoloader::getInstance();
 		parent::__construct($environment);
 		
 		// options
@@ -36,7 +42,6 @@ class Zest_Application extends Zend_Application{
 		
 		// configuration propre au framework Zest
 		$options = $this->mergeOptions($options, array(
-			'autoloadernamespaces' => array('Zest'),
 			'resources' => array(
 				'frontcontroller' => array(
 					'actionhelperpaths' => array('Zest_Controller_Action_Helper' => 'Zest/Controller/Action/Helper')
