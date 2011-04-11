@@ -20,15 +20,7 @@ class Zest_Controller_Plugin_Head extends Zend_Controller_Plugin_Abstract{
 		// encoding
 		$view->head()->contentType('text/html; charset='.strtolower($view->getEncoding()));
 		
-		$helpers = array('headTitle', 'headMeta', 'headLink', 'headStyle', 'headScript');
-		$head = '';
-		foreach($helpers as $helper){
-			if($html = $view->$helper()->toString()){
-				$head .= $html.PHP_EOL;
-			}
-		}
-		
-		if($head){
+		if($head = $view->head()->toString()){
 			$body = str_replace('</head>', $head.'</head>', $body);
 			$this->getResponse()->setBody($body, 'default');
 		}
