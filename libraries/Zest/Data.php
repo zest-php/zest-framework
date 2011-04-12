@@ -17,6 +17,13 @@ class Zest_Data implements IteratorAggregate{
 	 */
 	public function __construct(array $data = array()){
 		$this->setData($data);
+		$this->init();
+	}
+	
+	/**
+	 * @return void
+	 */
+	public function init(){
 	}
 	
 	/**

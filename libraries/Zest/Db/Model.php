@@ -22,11 +22,6 @@ class Zest_Db_Model{
 	protected $_adapter = null;
 	
 	/**
-	 * @var Zest_Db_Model_NestedSet
-	 */
-	protected $_nestedSet = null;
-	
-	/**
 	 * @var array
 	 */
 	protected static $_instances = array();
@@ -44,7 +39,6 @@ class Zest_Db_Model{
 		if(!is_null($dbTable)){
 			$this->setDbTable($dbTable);
 		}
-		$this->_nestedSet = new Zest_Db_Model_NestedSet();
 	}
 	
 	/**
@@ -120,41 +114,6 @@ class Zest_Db_Model{
 	}
 	
 	/**
-	 * @param string|Zest_Db_Model $foreignModel
-	 * @param string $foreignCol
-	 * @param string $localCol
-	 * @param string $property
-	 * @return Zest_Db_Model
-	 */
-	public function hasMany($foreignModel, $foreignCol, $localCol, $property){
-		$this->_nestedSet->addNested(new Zest_Db_Model_Nested($foreignModel, $foreignCol, $localCol, Zest_Db_Model_Nested::MODE_MANY, $property));
-		return $this;
-	}
-	
-	/**
-	 * @param string|Zest_Db_Model $foreignModel
-	 * @param string $foreignCol
-	 * @param string $localCol
-	 * @param string $property
-	 * @return Zest_Db_Model
-	 */
-	public function hasOne($foreignModel, $foreignCol, $localCol, $property){
-		$this->_nestedSet->addNested(new Zest_Db_Model_Nested($foreignModel, $foreignCol, $localCol, Zest_Db_Model_Nested::MODE_ONE, $property));
-		return $this;
-	}
-	
-	/**
-	 * @param string|Zest_Db_Model $foreignModel
-	 * @param string $foreignCol
-	 * @param string $localCol
-	 * @return Zest_Db_Model
-	 */
-	public function isAlso($foreignModel, $foreignCol, $localCol){
-		$this->_nestedSet->addNested(new Zest_Db_Model_Nested($foreignModel, $foreignCol, $localCol, Zest_Db_Model_Nested::MODE_ALSO));
-		return $this;
-	}
-	
-	/**
 	 * @param object $object
 	 * @return array
 	 */
@@ -165,13 +124,6 @@ class Zest_Db_Model{
 		else{
 			throw new Zest_Db_Exception('La méthode "toArray" doit être définie.');
 		}
-	}
-	
-	/**
-	 * @return Zest_Db_Model_NestedSet
-	 */
-	public function getNestedSet(){
-		return $this->_nestedSet;
 	}
 	
 	/**
@@ -236,9 +188,6 @@ class Zest_Db_Model{
 		
 		// remplacement du SELECT * par chaque nom de colonne
 		$select->from($table->info(Zest_Db_Table::NAME), $table->info(Zest_Db_Table::COLS));
-		
-		// nested set
-		$this->_nestedSet->alterDbSelect($this, $select);
 		
 		// gestion des options
 		foreach($request->getOptions() as $name => $value){
@@ -406,25 +355,10 @@ class Zest_Db_Model{
 		
 		// envoi de la requête
 		$rowSet = $table->fetchAll($select)->toArray();
-		
-		// nested set
-		if($this->getNestedSet()->hasNested()){
-			foreach($rowSet as $row){			
-				// récupération des valeurs des clefs primaires pour l'indexation
-				$key = implode(self::GETARRAY_KEY_SEPARATOR, $this->getIntersectPrimary($row));
-				if(!isset($arrayObjects[$key])){
-					$arrayObjects[$key] = array();
-				}
-				$arrayObjects[$key][] = $row;
-			}
-			$arrayObjects = $this->getNestedSet()->alterObjects($arrayObjects, $this);
-		}
-		else{
-			foreach($rowSet as $row){			
-				// récupération des valeurs des clefs primaires pour l'indexation
-				$key = implode(self::GETARRAY_KEY_SEPARATOR, $this->getIntersectPrimary($row));
-				$arrayObjects[$key] = $this->toObject($row);
-			}
+		foreach($rowSet as $row){			
+			// récupération des valeurs des clefs primaires pour l'indexation
+			$key = implode(self::GETARRAY_KEY_SEPARATOR, $this->getIntersectPrimary($row));
+			$arrayObjects[$key] = $this->toObject($row);
 		}
 		
 		return $arrayObjects;
