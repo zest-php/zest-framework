@@ -180,7 +180,7 @@ class Zest_Db_Object extends Zest_Data{
 	 */
 	public function create(array $data = array(), array $options = array()){
 		$this->_data = array();
-		$this->getMapper()->create($data, $this, $options);
+		$this->getMapper()->createDbObject($data, $this, $options);
 		return $this;
 	}
 	
@@ -218,7 +218,7 @@ class Zest_Db_Object extends Zest_Data{
 		if(!$this->_data){
 			$this->create();
 		}
-		$this->getMapper()->save($this, $options);
+		$this->getMapper()->saveDbObject($this, $options);
 		return $this;
 	}
 	
@@ -227,7 +227,7 @@ class Zest_Db_Object extends Zest_Data{
 	 * @return Zest_Db_Object
 	 */
 	public function delete(array $options = array()){
-		$this->getMapper()->delete($this, $options);
+		$this->getMapper()->deleteDbObject($this, $options);
 		return $this;
 	}
 	

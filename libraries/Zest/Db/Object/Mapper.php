@@ -48,7 +48,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	 * @param array $options
 	 * @return Zest_Db_Object
 	 */
-	public function create(array $data = array(), Zest_Db_Object $object = null, array $options = array()){
+	public function createDbObject(array $data = array(), Zest_Db_Object $object = null, array $options = array()){
 		if(is_null($object)){
 			$object = new $this->_objectClass();
 			if($object instanceof Zest_Db_Object){
@@ -57,7 +57,7 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 		}
 		$request = Zest_Db_Model_Request::factory($data);
 		$request->setOption($options);
-		$create = $this->createObject($request);
+		$create = $this->create($request);
 		if($create){
 			$object->setData($create->toArray());
 		}
@@ -113,10 +113,10 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	 * @param array $options
 	 * @return boolean
 	 */
-	public function save(Zest_Db_Object $object, array $options = array()){
+	public function saveDbObject(Zest_Db_Object $object, array $options = array()){
 		$request = Zest_Db_Model_Request::factory(array('object' => $object));
 		$request->setOption($options);
-		return $this->saveObject($request);
+		return $this->save($request);
 	}
 	
 	/**
@@ -124,12 +124,12 @@ class Zest_Db_Object_Mapper extends Zest_Db_Model{
 	 * @param array $options
 	 * @return boolean
 	 */
-	public function delete(Zest_Db_Object $object, array $options = array()){
+	public function deleteDbObject(Zest_Db_Object $object, array $options = array()){
 		$intersectPrimary = $this->getIntersectPrimary($object->toArray());
 		if($intersectPrimary){
 			$request = Zest_Db_Model_Request::factory($intersectPrimary);
 			$request->setOption($options);
-			return $this->deleteObject($request);
+			return $this->delete($request);
 		}
 		return false;
 	}
