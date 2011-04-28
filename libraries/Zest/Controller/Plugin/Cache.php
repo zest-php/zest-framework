@@ -246,6 +246,15 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 		$params = $request->getParams();
 		unset($params['module'], $params['controller'], $params['action']);
 		
+		if($response = $this->getResponse()){
+			$headers = $response->getHeaders();
+			foreach($headers as $header){
+				if(strtolower($header['name']) == 'content-type' && !strpos($header['value'], 'html')){
+					return false;
+				}
+			}
+		}
+		
 		return $request->isGet() && !$params;
 	}
 	
@@ -254,7 +263,7 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 	 * @return void
 	 */
 	public function preDispatch(Zend_Controller_Request_Abstract $request){
-		if(!$this->_isCacheable($request)) return;
+//		if(!$this->_isCacheable($request)) return;
 		
 		$cacheId = $this->_getCacheId($request);
 		$cache = $this->_getCache();
