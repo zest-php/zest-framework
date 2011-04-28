@@ -38,4 +38,29 @@ class Zest_Db_Adapter_Pdo_Sqlite extends Zend_Db_Adapter_Pdo_Sqlite{
 		$result = $stmt->rowCount();
 		return $result;		
 	}
+	
+	/**
+	 * @param string $ident
+	 * @param string $alias
+	 * @param boolean $auto
+	 * @param string $as
+	 * @return string
+	 */
+	protected function _quoteIdentifierAs($ident, $alias = null, $auto = false, $as = ' AS '){
+		if(is_null($alias) || $ident == $alias){
+			return parent::_quoteIdentifierAs($ident, $alias, $auto, $as);
+		}
+		/**
+		 * corrige un problème quand on fait un select sur plusieurs tables
+		 * exemple :
+		 * 		SELECT "n"."id" FROM "directory" AS "n"
+		 * 
+		 * 		grâce à ce patch, il est possible de faire
+		 * 		SELECT "n"."id" AS "id" FROM "directory" AS "n"
+		 */
+		$newAlias = '~'.$alias;
+		$quoted = parent::_quoteIdentifierAs($ident, $newAlias, $auto, $as);
+		return str_replace($newAlias, $alias, $quoted);
+	}
+	
 }

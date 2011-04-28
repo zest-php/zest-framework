@@ -3,9 +3,9 @@
 /**
  * @category Zest
  * @package Zest_Db
- * @subpackage Object
+ * @subpackage Orm
  */
-class Zest_Db_Object_Nested extends Zest_Db_Object{
+class Zest_Db_Orm_Nested_Object extends Zest_Db_Object{
 	
 	/**
 	 * @var array
@@ -18,7 +18,7 @@ class Zest_Db_Object_Nested extends Zest_Db_Object{
 	 * @param string $localCol
 	 * @param string $property
 	 * @param array $options
-	 * @return Zest_Db_Object_Nested
+	 * @return Zest_Db_Orm_Nested_Object
 	 */
 	public function hasMany($foreignModel, $foreignCol, $localCol, $property, array $options = array()){
 		if(isset($this->_nested[$property])){
@@ -34,7 +34,7 @@ class Zest_Db_Object_Nested extends Zest_Db_Object{
 	 * @param string $localCol
 	 * @param string $property
 	 * @param array $options
-	 * @return Zest_Db_Object_Nested
+	 * @return Zest_Db_Orm_Nested_Object
 	 */
 	public function hasOne($foreignModel, $foreignCol, $localCol, $property, array $options = array()){
 		if(isset($this->_nested[$property])){

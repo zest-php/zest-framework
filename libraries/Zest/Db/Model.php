@@ -39,6 +39,13 @@ class Zest_Db_Model{
 		if(!is_null($dbTable)){
 			$this->setDbTable($dbTable);
 		}
+		$this->init();
+	}
+	
+	/**
+	 * @return void
+	 */
+	public function init(){
 	}
 	
 	/**
@@ -339,7 +346,7 @@ class Zest_Db_Model{
 		
 		// envoi de la requête
 		$rowSet = $table->fetchAll($select)->toArray();
-		foreach($rowSet as $row){			
+		foreach($rowSet as $row){
 			// récupération des valeurs des clefs primaires pour l'indexation
 			$key = implode(self::GETARRAY_KEY_SEPARATOR, $this->getIntersectPrimary($row));
 			$arrayObjects[$key] = $this->toObject($row);

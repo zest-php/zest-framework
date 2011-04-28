@@ -78,7 +78,7 @@ class Zest_Data implements IteratorAggregate{
 	 * @param mixed $value
 	 * @return Zest_Data
 	 */
-	public function append($key, $value){
+	public function appendData($key, $value){
 		if(!is_array($this->getData($key))){
 			$this->setData($key, array());
 		}
@@ -91,7 +91,7 @@ class Zest_Data implements IteratorAggregate{
 	 * @param mixed $value
 	 * @return Zest_Data
 	 */
-	public function prepend($key, $value){
+	public function prependData($key, $value){
 		if(!is_array($this->getData($key))){
 			$this->setData($key, array());
 		}
