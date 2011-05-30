@@ -114,7 +114,7 @@ class Zest_Application_Module_Bootstrap extends Zend_Application_Module_Bootstra
 			$path = $reflection->getFileName();
 			$this->setResourceLoader(new Zest_Application_Module_Autoloader(array(
 				'namespace' => $this->getModuleName(),
-				'basePath'  => dirname($path),
+				'basePath'  => dirname($path)
 			)));
 		}
 		return parent::getResourceLoader();

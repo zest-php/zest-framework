@@ -27,7 +27,8 @@ class Zest_Form_Decorator_TrLabelElement extends Zest_Form_Decorator_Abstract{
 	 */
 	public function getElementRenderDecorator(){
 		if(is_null($this->_elementRenderDecorator)){
-			$this->_elementRenderDecorator = new Zend_Form_Decorator_ViewHelper();
+			$viewHelper = $this->getElement()->getPluginLoader(Zend_Form_Element::DECORATOR)->load('viewHelper');
+			$this->_elementRenderDecorator = new $viewHelper();
 		}
 		return $this->_elementRenderDecorator;
 	}

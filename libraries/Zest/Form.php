@@ -144,7 +144,6 @@ class Zest_Form extends Zend_Form{
 		$this->addPrefixPath('Zest_Form_Element', 'Zest/Form/Element', Zend_Form::ELEMENT);
 		$this->addPrefixPath('Zest_Form_Decorator', 'Zest/Form/Decorator', Zend_Form::DECORATOR);
 		
-//		$this->addElementPrefixPath('Zest_Form_Decorator', 'Zest/Form/Decorator', Zend_Form_Element::DECORATOR);
 		$this->addElementPrefixPath('Zest_Filter', 'Zest/Filter', Zend_Form_Element::FILTER);
 		$this->addElementPrefixPath('Zest_Validate', 'Zest/Validate', Zend_Form_Element::VALIDATE);
 	}

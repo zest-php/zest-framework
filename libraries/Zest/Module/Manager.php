@@ -57,9 +57,4 @@ abstract class Zest_Module_Manager{
 		return Zest_Config::get('module.'.$this->getModuleName().($key ? '.'.$key : ''), $throwExceptions);
 	}
 	
-	/**
-	 * @return Zest_Module_Manager
-	 */
-	abstract public static function getInstance();
-	
 }

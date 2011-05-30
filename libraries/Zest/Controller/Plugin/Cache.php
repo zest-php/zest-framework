@@ -249,7 +249,7 @@ class Zest_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract{
 		if($response = $this->getResponse()){
 			$headers = $response->getHeaders();
 			foreach($headers as $header){
-				if(strtolower($header['name']) == 'content-type' && !strpos($header['value'], 'html')){
+				if(strtolower($header['name']) == 'content-type' && !is_int(strpos($header['value'], 'html'))){
 					return false;
 				}
 			}
