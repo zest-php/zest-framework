@@ -57,4 +57,15 @@ abstract class Zest_Module_Manager{
 		return Zest_Config::get('module.'.$this->getModuleName().($key ? '.'.$key : ''), $throwExceptions);
 	}
 	
+	/**
+	 * @return string
+	 */
+	public function getUrl(){
+		$controller = Zest_Controller_Front::getInstance();
+		if($controller instanceof Zest_Controller_Front){
+			return $controller->getModuleUrl($this->getModuleName());
+		}
+		throw new Zest_Acl_Exception('Le frontcontroller doit être une instance de Zest_Controller_Front.');
+	}
+	
 }
