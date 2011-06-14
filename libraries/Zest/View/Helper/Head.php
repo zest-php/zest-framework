@@ -22,10 +22,13 @@ class Zest_View_Helper_Head extends Zend_View_Helper_Abstract{
 	}
 	
 	/**
+	 * @param array $helpers
 	 * @return string
 	 */
-	public function toString(){
-		$helpers = array('headTitle', 'headMeta', 'headLink', 'headStyle', 'headScript');
+	public function toString(array $helpers = null){
+		if(is_null($helpers)){
+			$helpers = array('headTitle', 'headMeta', 'headLink', 'headStyle', 'headScript');
+		}
 		$head = '';
 		foreach($helpers as $helper){
 			if($html = $this->view->$helper()->toString()){
