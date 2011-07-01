@@ -12,7 +12,9 @@ class Zest_Controller_Plugin_Head extends Zend_Controller_Plugin_Abstract{
 	 * @return void
 	 */
 	public function postDispatch(Zend_Controller_Request_Abstract $request){
-		$body = $this->getResponse()->getBody('default');
+		$response = $this->getResponse();
+		
+		$body = $response->getBody('default');
 		$isHead = is_int(strpos($body, '</head>'));
 		
 		$view = Zest_View::getStaticView();
@@ -26,7 +28,13 @@ class Zest_Controller_Plugin_Head extends Zend_Controller_Plugin_Abstract{
 		else{
 			$helpers = array('headLink', 'headStyle', 'headScript');
 		}
-		
+	
+		$headers = $response->getHeaders();
+		foreach($headers as $header){
+			if(strtolower($header['name']) == 'content-type' && !is_int(strpos($header['value'], 'html'))){
+				return false;
+			}
+		}
 		
 		if($head = $view->head()->toString($helpers)){
 			if($isHead){
@@ -35,7 +43,7 @@ class Zest_Controller_Plugin_Head extends Zend_Controller_Plugin_Abstract{
 			else if(method_exists($request, 'isXmlHttpRequest') && $request->isXmlHttpRequest()){
 				$body = $head.$body;
 			}
-			$this->getResponse()->setBody($body, 'default');
+			$response->setBody($body, 'default');
 		}
 	}
 	

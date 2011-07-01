@@ -50,6 +50,7 @@ class Zest_Form_Db extends Zest_Form{
 	
 	/**
 	 * @param boolean $build
+	 * @param boolean $throwExceptions
 	 * @return Zest_Db_Object
 	 */
 	public function getDbObject($build = true, $throwExceptions = true){
