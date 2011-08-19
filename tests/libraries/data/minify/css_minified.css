@@ -1,0 +1,5 @@
+body,pre,input,textarea,select,button{font-family:arial,verdana,helvetica,sans-serif;font-size:12px}html,body,p,table,td,th,form,input,select,textarea,button,pre,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6{padding:0px;margin:0px}a{text-decoration:underline}a:hover{text-decoration:none}a
+img{border-width:0px}td,th{vertical-align:top}table{border-collapse:collapse}form table td, form table
+th{padding:3px}form table td
+td{padding:0px}form label input[type=radio]{margin:0px
+5px 0px 0px}input{vertical-align:middle;padding:2px}

@@ -27,7 +27,7 @@ abstract class Zest_Module_Manager{
 	 * @return string
 	 */
 	public function isEnvironmentDev(){
-		return substr(Zend_Registry::get('environment'), 0, 3) == 'dev';
+		return Zend_Registry::isRegistered('environment') && substr(Zend_Registry::get('environment'), 0, 3) == 'dev';
 	}
 	
 	/**

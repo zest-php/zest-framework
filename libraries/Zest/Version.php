@@ -24,7 +24,7 @@ final class Zest_Version{
 	/**
 	 * @var string
 	 */
-	const VERSION = '1.1.4';
+	const VERSION = '1.1.5';
 	
 	/**
 	 * @var string

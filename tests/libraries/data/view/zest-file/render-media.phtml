@@ -1,0 +1,7 @@
+<?php
+
+$file = $this->file($this->pathname, $this->options);
+
+if($file->exists && $file->isImage):
+	echo '<img src="'.$file->url.'" alt="'.$file->basename.'" />';
+endif;

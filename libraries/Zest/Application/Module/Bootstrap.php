@@ -36,9 +36,19 @@ class Zest_Application_Module_Bootstrap extends Zend_Application_Module_Bootstra
 	}
 	
 	/**
+	 * @param string $version
+	 * @return void
+	 */
+	public function requireAtLeastFramework($version){
+		if(!version_compare(Zest_Version::VERSION, $version, '>=')){
+			throw new Zest_Controller_Exception(sprintf('La version minimale requise pour le framework Zest est "%s".', $version));
+		}
+	}
+	
+	/**
 	 * @param string $module
 	 * @param string $version
-	 * @return boolean
+	 * @return void
 	 */
 	public function requireAtLeastModule($module, $version){
 		if(!$this->compareModuleVersion($module, $version, '>=')){
@@ -49,7 +59,7 @@ class Zest_Application_Module_Bootstrap extends Zend_Application_Module_Bootstra
 	/**
 	 * @param string $module
 	 * @param string $version
-	 * @return boolean
+	 * @return void
 	 */
 	public function requireAtMostModule($module, $version){
 		if(!$this->compareModuleVersion($module, $version, '<=')){

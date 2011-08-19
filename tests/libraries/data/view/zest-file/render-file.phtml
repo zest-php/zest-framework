@@ -1,0 +1,7 @@
+<?php
+
+$file = $this->file($this->pathname, $this->options);
+
+if($file->exists):
+	echo '<a href="'.$file->url.'">'.$file->basename.'</a>';
+endif;

@@ -1,0 +1,12 @@
+html_tag{
+	border: 1px solid black;
+}
+
+html_tag_multi{
+	border: 1px solid black;
+	font-size: 10px;
+}
+
+html_tag_semicolon{
+	border: 1px solid red
+}
