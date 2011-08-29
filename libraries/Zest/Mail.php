@@ -140,6 +140,17 @@ class Zest_Mail extends Zend_Mail{
 	}
 	
 	/**
+	 * @param string|array $emails
+	 * @param string $name
+	 * @return Zest_Mail
+	 */
+	public function setTo($emails, $name = ''){
+		$this->clearRecipients();
+		$this->addTo($emails, $name);
+		return $this;
+	}
+	
+	/**
 	 * @param string|Zest_File|Zend_Mime_Part $file
 	 * @return Zest_Mail
 	 */

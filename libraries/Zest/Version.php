@@ -9,7 +9,7 @@ final class Zest_Version{
 	/**
 	 * @var string
 	 */
-	const COPYRIGHT = 'Copyright (c) 2009-2010, http://www.zest-php.com/';
+	const COPYRIGHT = 'Copyright (c) 2009-2011, http://www.zest-php.com/';
 	
 	/**
 	 * @var string
