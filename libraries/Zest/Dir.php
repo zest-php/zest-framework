@@ -90,18 +90,28 @@ class Zest_Dir extends Zest_File_Abstract implements IteratorAggregate{
 		$this->_pathname = rtrim($this->_pathname, '/');
 		return $this;
 	}
-	
 	/**
 	 * @param Zest_Dir|string $dest
 	 * @param string $copyMode
 	 * @return boolean
 	 */
 	public function copy($dest, $copyMode = self::COPY_OVER){
+		return $this->copyIn($dest, $copyMode);
+	}
+	
+	/**
+	 * @param Zest_Dir|string $dest
+	 * @param string $copyMode
+	 * @return boolean
+	 */
+	public function copyIn($dest, $copyMode = self::COPY_OVER){
 		if(!$this->isReadable()) return;
 	
 		if(is_string($dest)){
 			$dest = new Zest_Dir($dest);
 		}
+	
+		$dest->setPathname($dest->getPathname().'/'.$this->getBasename());
 		
 		switch($copyMode){
 			case self::COPY_ALTERNATIVE:
@@ -111,8 +121,7 @@ class Zest_Dir extends Zest_File_Abstract implements IteratorAggregate{
 				$dest->recursiveRmdir();
 				break;
 		}
-	
-		$dest->setPathname($dest->getPathname().'/'.$this->getBasename());
+		
 		$dest->recursiveMkdir();
 		
 		$return = true;

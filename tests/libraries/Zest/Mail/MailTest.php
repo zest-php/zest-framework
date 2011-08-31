@@ -64,7 +64,7 @@ class Zest_Mail_MailTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals($to[0], $recipients[0]);
 	}
 	
-	public function testAddToEmailName(){
+	public function testAddToEmailNameSetTo(){
 		$mail = new Zest_Mail();
 		$mail->addTo('email@yopmail.com', 'a name');
 		
@@ -72,8 +72,22 @@ class Zest_Mail_MailTest extends PHPUnit_Framework_TestCase{
 		$to = $mail->getHeaders();
 		$to = $to['To'];
 		
+		$this->assertEquals(1, count($recipients));
+		$this->assertEquals(2, count($to));
 		$this->assertEquals('email@yopmail.com', $recipients[0]);
 		$this->assertEquals('a name <email@yopmail.com>', $to[0]);
+		
+		// setTo
+		$mail->setTo('another-email@yopmail.com', 'another name');
+		
+		$recipients = $mail->getRecipients();
+		$to = $mail->getHeaders();
+		$to = $to['To'];
+		
+		$this->assertEquals(1, count($recipients));
+		$this->assertEquals(2, count($to));
+		$this->assertEquals('another-email@yopmail.com', $recipients[0]);
+		$this->assertEquals('another name <another-email@yopmail.com>', $to[0]);
 	}
 	
 	public function testAddToEmails(){

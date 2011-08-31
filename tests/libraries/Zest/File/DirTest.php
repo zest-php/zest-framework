@@ -197,35 +197,52 @@ class Zest_File_DirTest extends Zest_File_AbstractTest{
 		$this->assertEquals($pathname, $dir->getPathname());
 	}
 	
-	public function testCopyOver(){
+	public function testCopyInOver(){
 		$base = $this->_getPathname();
 		
 		$pathname = $base.'/copy_over_recursive/copy_over_recursive';
 		$dir = new Zest_Dir($pathname);
 		$dir->recursiveMkdir();
 		
-		$pathname = $base.'/copy_over';
-		$dir->copy($pathname, Zest_Dir::COPY_OVER);
+		$touch_copied = $pathname.'/touch_copied';
+		touch($touch_copied);
 		
-		$this->assertTrue(file_exists($pathname.'/copy_over_recursive'));
-		$this->assertFalse(file_exists($pathname.'/copy_over_recursive/copy_over_recursive'));
+		$pathname_in = $base.'/copy_over';
+		Zest_Dir::factory($pathname_in)->recursiveMkdir();
+		
+		Zest_Dir::factory($pathname_in.'/copy_over_recursive')->recursiveMkdir();
+		$this->assertFalse(file_exists($pathname_in.'/copy_over_recursive/touch_copied'));
+		
+		$touch = $pathname_in.'/touch_copy_over';
+		touch($touch);
+		
+		$dir->copyIn($pathname_in, Zest_Dir::COPY_OVER);
+		
+		$this->assertTrue(file_exists($touch));
+		$this->assertTrue(file_exists($pathname_in.'/copy_over_recursive/touch_copied'));
+		$this->assertFalse(file_exists($pathname_in.'/copy_over_recursive/copy_over_recursive'));
 	}
 	
-	public function testCopyAlternative(){
+	public function testCopyInAlternative(){
 		$base = $this->_getPathname();
 		
 		$pathname = $base.'/copy_alternative_recursive/copy_alternative_recursive';
 		$dir = new Zest_Dir($pathname);
 		$dir->recursiveMkdir();
 		
-		$pathname = $base.'/copy_alternative';
-		$dir->copy($pathname, Zest_Dir::COPY_ALTERNATIVE);
-		$dir->copy($pathname, Zest_Dir::COPY_ALTERNATIVE);
+		$pathname_in = $base.'/copy_alternative';
+		$dir->copyIn($pathname_in, Zest_Dir::COPY_ALTERNATIVE);
+		$dir->copyIn($pathname_in, Zest_Dir::COPY_ALTERNATIVE);
 		
-		$pathname = $base.'/copy_alternative_1';
+		$this->assertTrue(file_exists($pathname_in));
+		
+		$pathname = $pathname_in.'/copy_alternative_recursive';
 		$this->assertTrue(file_exists($pathname));
-		$this->assertTrue(file_exists($pathname.'/copy_alternative_recursive'));
-		$this->assertFalse(file_exists($pathname.'/copy_alternative_recursive/copy_alternative_recursive'));
+		$this->assertFalse(file_exists($pathname.'/copy_alternative_recursive'));
+		
+		$pathname = $pathname_in.'/copy_alternative_recursive_1';
+		$this->assertTrue(file_exists($pathname));
+		$this->assertFalse(file_exists($pathname.'/copy_alternative_recursive'));
 	}
 	
 	public function testGlob(){

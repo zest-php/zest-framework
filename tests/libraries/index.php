@@ -21,6 +21,6 @@ set_include_path(implode(PATH_SEPARATOR, array(LIBRARIES_PATH, LIBRARIES_PATH.'/
 require_once 'Zend/Loader/Autoloader.php';
 Zend_Loader_Autoloader::getInstance()->registerNamespace(array('Zest', 'PHPUnit'));
 
-//define('PHPUnit_MAIN_METHOD', 'Zest_File_Helper_AllTests::main');
+// define('PHPUnit_MAIN_METHOD', 'Zest_File_AllTests::main');
 
 require_once 'Zest/AllTests.php';

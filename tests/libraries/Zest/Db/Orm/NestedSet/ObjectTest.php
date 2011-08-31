@@ -50,6 +50,10 @@ class Zest_Db_Orm_NestedSet_ObjectTest extends Zest_Db_AbstractTest{
 		Zest_Db_Orm_NestedSet_Object::resetMemoization();
 	}
 	
+	protected function tearDown(){
+		self::$_db->query('DELETE FROM "directory";');
+	}
+	
 	public function testCreateRoot(){
 		$racine = $this->_getBranch('racine');
 		$this->_beforeAll = count(self::$_db->getProfiler()->getQueryProfiles());
